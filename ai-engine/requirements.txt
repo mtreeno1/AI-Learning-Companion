@@ -2,4 +2,6 @@ ultralytics
 opencv-python
 numpy
 fastapi
-uvicorn
+uvicorn[standard]
+python-multipart
+websockets
