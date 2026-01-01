@@ -1,6 +1,6 @@
 # FocusFlow Authentication API
 
-A FastAPI-based authentication backend for the FocusFlow AI Learning Companion.
+A FastAPI-based authentication backend for the FocusFlow AI Learning Companion with PostgreSQL database.
 
 ## Features
 
@@ -9,6 +9,41 @@ A FastAPI-based authentication backend for the FocusFlow AI Learning Companion.
 - Session management with tokens
 - Token verification
 - User logout
+- PostgreSQL database storage
+
+## Prerequisites
+
+- Python 3.8+
+- PostgreSQL database
+
+## Database Setup
+
+1. Install PostgreSQL if you haven't already:
+```bash
+# On Ubuntu/Debian
+sudo apt-get install postgresql postgresql-contrib
+
+# On macOS
+brew install postgresql
+```
+
+2. Create the database:
+```bash
+# Access PostgreSQL
+sudo -u postgres psql
+
+# Create database and user
+CREATE DATABASE focusflow;
+CREATE USER postgres WITH PASSWORD 'postgres';
+GRANT ALL PRIVILEGES ON DATABASE focusflow TO postgres;
+\q
+```
+
+3. Set the database URL (optional):
+```bash
+# Default: postgresql://postgres:postgres@localhost/focusflow
+export DATABASE_URL="postgresql://username:password@localhost/dbname"
+```
 
 ## Installation
 
@@ -25,6 +60,8 @@ python auth_api.py
 ```
 
 The API will be available at `http://localhost:8000`
+
+The database tables will be created automatically on first run.
 
 ## API Documentation
 
@@ -110,30 +147,48 @@ Verify a session token.
 }
 ```
 
-## Security Notes
+## Security Features
 
-- Passwords are hashed using bcrypt (a slow, secure hashing algorithm designed for passwords)
-- Session tokens are generated using cryptographically secure random methods
-- Tokens are passed via Authorization header (Bearer token) to avoid exposure in logs
-- Tokens expire after 7 days
-- CORS is configured to allow requests from localhost:3000 and localhost:3001
+- ✅ **Bcrypt password hashing**: Resistant to brute force attacks
+- ✅ **Secure token generation**: Cryptographically secure random tokens
+- ✅ **Authorization header**: Tokens passed via Bearer token to avoid exposure in logs
+- ✅ **Token expiration**: 7-day session timeout
+- ✅ **PostgreSQL database**: ACID-compliant, production-ready storage
+- ✅ **SQLAlchemy ORM**: Protection against SQL injection
+- ✅ **Input validation**: Pydantic models with type checking
 
-**Important:** The file-based storage is not thread-safe. For production use:
-- Replace JSON file storage with a proper database
-- Add database transactions for data integrity
+## Database Schema
+
+### users table
+- `id` (String, Primary Key): Unique user identifier
+- `email` (String, Unique): User email address
+- `name` (String): User full name
+- `password` (String): Bcrypt hashed password
+- `created_at` (DateTime): Account creation timestamp
+
+### sessions table
+- `token` (String, Primary Key): Session token
+- `user_id` (String): Reference to user ID
+- `email` (String): User email
+- `expires_at` (DateTime): Token expiration time
+
+## Production Deployment
+
+For production use, consider:
+- Use environment variables for database credentials
+- Enable SSL/TLS for database connections
 - Implement rate limiting to prevent brute force attacks
 - Use HTTPS for encrypted communication
 - Add proper logging and monitoring
+- Set up database backups
+- Configure connection pooling
+- Add database migrations with Alembic
 
-## Storage
+## Environment Variables
 
-User data and sessions are stored in JSON files:
-- `users.json`: User credentials and profile data
-- `sessions.json`: Active session tokens
+- `DATABASE_URL`: PostgreSQL connection string (default: `postgresql://postgres:postgres@localhost/focusflow`)
 
-**Note:** This is a simple implementation for development. The file-based storage is not thread-safe and could lead to race conditions with concurrent requests. In production, use a proper database (PostgreSQL, MongoDB, etc.) and implement additional security measures such as:
-- Database transactions for data integrity
-- Rate limiting to prevent brute force attacks
-- HTTPS for encrypted communication
-- Environment-based configuration
-- Proper logging and monitoring
+Example:
+```bash
+export DATABASE_URL="postgresql://user:password@localhost:5432/focusflow"
+```

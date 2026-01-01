@@ -6,3 +6,5 @@ uvicorn
 pydantic[email]
 python-multipart
 passlib[bcrypt]
+sqlalchemy
+psycopg2-binary
