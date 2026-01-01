@@ -6,17 +6,20 @@ interface User {
   id: string
   email: string
   name: string
+  token: string
 }
 
 interface AuthContextType {
   user: User | null
   login: (email: string, password: string) => Promise<void>
   signup: (name: string, email: string, password: string) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
   isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -24,35 +27,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check for existing session
-    try {
-      const storedUser = localStorage.getItem("user")
-      if (storedUser) {
-        setUser(JSON.parse(storedUser))
+    const verifySession = async () => {
+      try {
+        const storedUser = localStorage.getItem("user")
+        if (storedUser) {
+          const userData = JSON.parse(storedUser)
+          
+          // Verify token with backend
+          const response = await fetch(
+            `${API_BASE_URL}/api/auth/verify?token=${encodeURIComponent(userData.token)}`
+          )
+          
+          if (response.ok) {
+            const verifiedUser = await response.json()
+            setUser(verifiedUser)
+          } else {
+            // Token is invalid or expired
+            localStorage.removeItem("user")
+          }
+        }
+      } catch (error) {
+        // Clear invalid data
+        localStorage.removeItem("user")
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      // Clear invalid data
-      localStorage.removeItem("user")
     }
-    setIsLoading(false)
+
+    verifySession()
   }, [])
 
   const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      // Simulate API call - replace with actual authentication
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      
-      // For demo purposes, accept any email/password
-      const userData: User = {
-        id: crypto.randomUUID(),
-        email,
-        name: email.split("@")[0],
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.detail || "Login failed")
       }
-      
+
+      const userData: User = await response.json()
       setUser(userData)
       localStorage.setItem("user", JSON.stringify(userData))
     } catch (error) {
-      throw new Error("Login failed")
+      throw error instanceof Error ? error : new Error("Login failed")
     } finally {
       setIsLoading(false)
     }
@@ -61,28 +86,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (name: string, email: string, password: string) => {
     setIsLoading(true)
     try {
-      // Simulate API call - replace with actual authentication
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      
-      // For demo purposes, create user
-      const userData: User = {
-        id: crypto.randomUUID(),
-        email,
-        name,
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.detail || "Signup failed")
       }
-      
+
+      const userData: User = await response.json()
       setUser(userData)
       localStorage.setItem("user", JSON.stringify(userData))
     } catch (error) {
-      throw new Error("Signup failed")
+      throw error instanceof Error ? error : new Error("Signup failed")
     } finally {
       setIsLoading(false)
     }
   }
 
-  const logout = () => {
-    setUser(null)
-    localStorage.removeItem("user")
+  const logout = async () => {
+    try {
+      if (user?.token) {
+        await fetch(`${API_BASE_URL}/api/auth/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: user.token }),
+        })
+      }
+    } catch (error) {
+      console.error("Logout error:", error)
+    } finally {
+      setUser(null)
+      localStorage.removeItem("user")
+    }
   }
 
   return (
