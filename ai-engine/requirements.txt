@@ -4,6 +4,7 @@ numpy
 fastapi
 uvicorn
 pydantic[email]
+pydantic-settings
 python-multipart
 passlib[bcrypt]
 sqlalchemy
