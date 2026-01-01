@@ -24,9 +24,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check for existing session
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    try {
+      const storedUser = localStorage.getItem("user")
+      if (storedUser) {
+        setUser(JSON.parse(storedUser))
+      }
+    } catch (error) {
+      // Clear invalid data
+      localStorage.removeItem("user")
     }
     setIsLoading(false)
   }, [])
@@ -39,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // For demo purposes, accept any email/password
       const userData: User = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: crypto.randomUUID(),
         email,
         name: email.split("@")[0],
       }
@@ -61,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // For demo purposes, create user
       const userData: User = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: crypto.randomUUID(),
         email,
         name,
       }
