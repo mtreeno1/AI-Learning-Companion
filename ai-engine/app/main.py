@@ -9,15 +9,24 @@ from app.config import settings
 from app.database import init_db
 from app.routers import auth_router
 
-# Initialize database
-init_db()
-
 # Create FastAPI application
 app = FastAPI(
     title="FocusFlow API",
     description="Authentication and services API for FocusFlow AI Learning Companion",
     version="1.0.0"
 )
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on startup"""
+    try:
+        init_db()
+        print("✅ Database initialized successfully")
+    except Exception as e:
+        print(f"⚠️  Database initialization failed: {e}")
+        print("   Make sure PostgreSQL is running and the database exists.")
+        print("   Run: CREATE DATABASE focusflow;")
 
 # Configure CORS
 app.add_middleware(
