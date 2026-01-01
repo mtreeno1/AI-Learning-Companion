@@ -1,9 +1,17 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { Hourglass, LayoutDashboard, Clock } from "lucide-react"
+import { Hourglass, LayoutDashboard, Clock, LogOut } from "lucide-react"
 import type { View } from "@/app/page"
 import { ThemeToggle } from "./theme-toggle"
+import { useAuth } from "@/lib/auth-context"
+import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface SidebarProps {
   activeView: View
@@ -17,6 +25,8 @@ const navItems = [
 ]
 
 export function Sidebar({ activeView, onViewChange }: SidebarProps) {
+  const { user, logout } = useAuth()
+
   return (
     <aside className="w-20 h-screen bg-sidebar border-r border-sidebar-border flex flex-col items-center py-6 gap-2">
       {/* Logo */}
@@ -56,7 +66,26 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
         })}
       </nav>
 
-      <div className="mt-auto">
+      <div className="mt-auto space-y-2">
+        {user && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={logout}
+                  className="w-12 h-12 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                >
+                  <LogOut className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Logout ({user.email})</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
         <ThemeToggle />
       </div>
     </aside>
