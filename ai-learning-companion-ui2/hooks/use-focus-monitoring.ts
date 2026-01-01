@@ -59,7 +59,7 @@ export function useFocusMonitoring(): UseFocusMonitoringResult {
       ws.onopen = () => {
         console.log('WebSocket connected to focus monitoring service')
         setIsConnected(true)
-        setError(null)
+        setError(null)  // Clear any previous errors on successful connection
       }
 
       ws.onmessage = (event) => {

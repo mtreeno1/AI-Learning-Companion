@@ -32,13 +32,6 @@ export function CameraPreview() {
             videoRef.current.srcObject = stream
             // Connect to focus monitoring service
             connect()
-            
-            // Start sending frames for analysis every 500ms
-            frameIntervalRef.current = setInterval(() => {
-              if (videoRef.current && isConnected) {
-                sendFrame(videoRef.current)
-              }
-            }, 500)
           }
         })
         .catch((err) => {
@@ -58,7 +51,25 @@ export function CameraPreview() {
       }
       disconnect()
     }
-  }, [mode, isConnected, connect, disconnect, sendFrame])
+  }, [mode, connect, disconnect])
+  
+  // Separate effect for frame sending - only send frames when connected
+  useEffect(() => {
+    if (mode === "camera" && isConnected && videoRef.current) {
+      // Start sending frames for analysis every 500ms
+      frameIntervalRef.current = setInterval(() => {
+        if (videoRef.current && isConnected) {
+          sendFrame(videoRef.current)
+        }
+      }, 500)
+      
+      return () => {
+        if (frameIntervalRef.current) {
+          clearInterval(frameIntervalRef.current)
+        }
+      }
+    }
+  }, [mode, isConnected, sendFrame])
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

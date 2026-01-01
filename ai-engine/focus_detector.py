@@ -144,8 +144,8 @@ class FocusDetector:
             "phone_detected": phone_detected,
             "phone_info": phone_info,
             "head_pose": {
-                "yaw": float(yaw) if yaw is not None else None,
-                "pitch": float(pitch) if pitch is not None else None
+                "yaw": yaw if yaw is not None else None,
+                "pitch": pitch if pitch is not None else None
             },
             "keypoints": keypoints,
             "focus_reasons": focus_reasons if not focused else ["User is focused"]
