@@ -26,13 +26,19 @@ def signup(request: SignupRequest, db: Session = Depends(get_db)):
     - **email**: User's email address
     - **password**: Password (minimum 6 characters)
     """
-    result = AuthService.signup(
-        db=db,
-        name=request.name,
-        email=request.email,
-        password=request.password
-    )
-    return UserResponse(**result)
+    try:
+        result = AuthService.signup(
+            db=db,
+            name=request.name,
+            email=request.email,
+            password=request.password
+        )
+        return UserResponse(**result)
+    except Exception as e:
+        import traceback
+        print(f"❌ Signup error: {str(e)}")
+        print(traceback.format_exc())
+        raise
 
 
 @router.post("/login", response_model=UserResponse)
