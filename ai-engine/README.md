@@ -97,8 +97,8 @@ Logout a user by invalidating their session.
 ### GET /api/auth/verify
 Verify a session token.
 
-**Query Parameters:**
-- `token`: Session token
+**Headers:**
+- `Authorization`: Bearer {token}
 
 **Response:**
 ```json
@@ -112,10 +112,18 @@ Verify a session token.
 
 ## Security Notes
 
-- Passwords are hashed using SHA-256
-- Session tokens are generated using secure random methods
+- Passwords are hashed using bcrypt (a slow, secure hashing algorithm designed for passwords)
+- Session tokens are generated using cryptographically secure random methods
+- Tokens are passed via Authorization header (Bearer token) to avoid exposure in logs
 - Tokens expire after 7 days
 - CORS is configured to allow requests from localhost:3000 and localhost:3001
+
+**Important:** The file-based storage is not thread-safe. For production use:
+- Replace JSON file storage with a proper database
+- Add database transactions for data integrity
+- Implement rate limiting to prevent brute force attacks
+- Use HTTPS for encrypted communication
+- Add proper logging and monitoring
 
 ## Storage
 
@@ -123,4 +131,9 @@ User data and sessions are stored in JSON files:
 - `users.json`: User credentials and profile data
 - `sessions.json`: Active session tokens
 
-**Note:** This is a simple implementation for development. In production, use a proper database (PostgreSQL, MongoDB, etc.) and implement additional security measures.
+**Note:** This is a simple implementation for development. The file-based storage is not thread-safe and could lead to race conditions with concurrent requests. In production, use a proper database (PostgreSQL, MongoDB, etc.) and implement additional security measures such as:
+- Database transactions for data integrity
+- Rate limiting to prevent brute force attacks
+- HTTPS for encrypted communication
+- Environment-based configuration
+- Proper logging and monitoring

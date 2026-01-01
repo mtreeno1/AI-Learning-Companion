@@ -1,12 +1,15 @@
-from fastapi import FastAPI, HTTPException, status, Query
+from fastapi import FastAPI, HTTPException, status, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-import hashlib
+from passlib.context import CryptContext
 import secrets
 import json
 import os
 from datetime import datetime, timedelta
+
+# Password hashing context
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app = FastAPI(title="FocusFlow Authentication API")
 
@@ -39,8 +42,13 @@ def save_json_file(filename: str, data: dict):
 
 
 def hash_password(password: str) -> str:
-    """Hash password using SHA-256"""
-    return hashlib.sha256(password.encode()).hexdigest()
+    """Hash password using bcrypt"""
+    return pwd_context.hash(password)
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a password against a hash"""
+    return pwd_context.verify(plain_password, hashed_password)
 
 
 def generate_token() -> str:
@@ -134,10 +142,9 @@ def login(request: LoginRequest):
         )
     
     user = users[request.email]
-    hashed_password = hash_password(request.password)
     
     # Verify password
-    if user["password"] != hashed_password:
+    if not verify_password(request.password, user["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password"
@@ -182,8 +189,15 @@ def logout(request: LogoutRequest):
 
 
 @app.get("/api/auth/verify", response_model=UserResponse)
-def verify_token(token: str = Query(..., description="Session token")):
+def verify_token(authorization: Optional[str] = Header(None)):
     """Verify a session token and return user info"""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization header"
+        )
+    
+    token = authorization.replace("Bearer ", "")
     sessions = load_json_file(SESSIONS_FILE)
     
     if token not in sessions:
