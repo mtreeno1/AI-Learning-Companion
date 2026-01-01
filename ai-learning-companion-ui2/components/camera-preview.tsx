@@ -4,8 +4,10 @@ import type React from "react"
 
 import { useEffect, useRef, useState } from "react"
 import { Card } from "@/components/ui/card"
-import { Video, VideoOff, Eye, Upload, X } from "lucide-react"
+import { Video, VideoOff, Eye, Upload, X, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useFocusMonitoring } from "@/hooks/use-focus-monitoring"
+import { Badge } from "@/components/ui/badge"
 
 type PreviewMode = "none" | "camera" | "upload"
 
@@ -13,9 +15,13 @@ export function CameraPreview() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const uploadedVideoRef = useRef<HTMLVideoElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const frameIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const [mode, setMode] = useState<PreviewMode>("none")
   const [error, setError] = useState<string | null>(null)
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState<string | null>(null)
+  
+  // Focus monitoring hook
+  const { isConnected, focusData, error: focusError, sendFrame, connect, disconnect } = useFocusMonitoring()
 
   useEffect(() => {
     if (mode === "camera" && videoRef.current) {
@@ -24,6 +30,15 @@ export function CameraPreview() {
         .then((stream) => {
           if (videoRef.current) {
             videoRef.current.srcObject = stream
+            // Connect to focus monitoring service
+            connect()
+            
+            // Start sending frames for analysis every 500ms
+            frameIntervalRef.current = setInterval(() => {
+              if (videoRef.current && isConnected) {
+                sendFrame(videoRef.current)
+              }
+            }, 500)
           }
         })
         .catch((err) => {
@@ -38,8 +53,12 @@ export function CameraPreview() {
         const tracks = (videoRef.current.srcObject as MediaStream).getTracks()
         tracks.forEach((track) => track.stop())
       }
+      if (frameIntervalRef.current) {
+        clearInterval(frameIntervalRef.current)
+      }
+      disconnect()
     }
-  }, [mode])
+  }, [mode, isConnected, connect, disconnect, sendFrame])
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -85,10 +104,53 @@ export function CameraPreview() {
       {mode === "camera" ? (
         <>
           <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover rounded-xl" />
+          
+          {/* Focus status overlay */}
+          {focusData && (
+            <div className="absolute top-4 left-4 right-4 flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant={focusData.focused ? "default" : "destructive"}
+                  className="text-sm font-semibold"
+                >
+                  {focusData.focused ? "✓ Focused" : "✗ Not Focused"}
+                </Badge>
+                {!isConnected && (
+                  <Badge variant="outline" className="text-xs">
+                    Connecting...
+                  </Badge>
+                )}
+              </div>
+              
+              {!focusData.focused && focusData.focus_reasons.length > 0 && (
+                <div className="bg-destructive/10 backdrop-blur-sm rounded-lg p-2 border border-destructive/20">
+                  <p className="text-xs text-destructive font-medium">{focusData.focus_reasons[0]}</p>
+                </div>
+              )}
+              
+              {focusData.head_pose.yaw !== null && focusData.head_pose.pitch !== null && (
+                <div className="bg-background/80 backdrop-blur-sm rounded-lg p-2 text-xs">
+                  <span className="text-muted-foreground">
+                    Yaw: {focusData.head_pose.yaw.toFixed(1)}° | Pitch: {focusData.head_pose.pitch.toFixed(1)}°
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {focusError && (
+            <div className="absolute top-4 left-4 right-4 bg-destructive/90 backdrop-blur-sm rounded-lg p-3 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-destructive-foreground" />
+              <span className="text-sm text-destructive-foreground">{focusError}</span>
+            </div>
+          )}
+          
           <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-sm">
               <Eye className="w-3.5 h-3.5 text-accent" />
-              <span className="text-xs text-muted-foreground">Focus awareness on-device</span>
+              <span className="text-xs text-muted-foreground">
+                Focus awareness {isConnected ? "active" : "connecting..."}
+              </span>
             </div>
             <Button size="sm" variant="secondary" onClick={handleDisable} className="gap-2">
               <VideoOff className="w-4 h-4" />

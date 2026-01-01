@@ -26,4 +26,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 ai-engine/venv/
