@@ -1,9 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef, Suspense } from "react"
-import { Canvas, useFrame, useThree } from "@react-three/fiber"
-import { OrbitControls, useGLTF, Environment, ContactShadows } from "@react-three/drei"
-import * as THREE from "three"
+import { useEffect } from "react"
 
 interface HourglassTimerProps {
   timeRemaining: number
@@ -12,222 +9,11 @@ interface HourglassTimerProps {
   onTimeUpdate: (time: number) => void
 }
 
-function HourglassModel({ modelUrl }: { modelUrl: string | null }) {
-  const meshRef = useRef<THREE.Group>(null)
-  const [hovered, setHovered] = useState(false)
-  const [brightness, setBrightness] = useState(1)
-  const { gl } = useThree()
-
-  // Load model if URL provided, otherwise use placeholder
-  const { scene } = useGLTF(modelUrl || "/assets/3d/duck.glb")
-
-  // Smooth brightness transition on hover
-  useFrame(() => {
-    const targetBrightness = hovered ? 1.5 : 1
-    setBrightness((prev) => THREE.MathUtils.lerp(prev, targetBrightness, 0.1))
-  })
-
-  // Apply emissive material for brightness effect
-  useEffect(() => {
-    if (scene) {
-      scene.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          const material = child.material as THREE.MeshStandardMaterial
-          if (material) {
-            material.emissive = new THREE.Color("#D4A855")
-            material.emissiveIntensity = hovered ? 0.3 : 0
-            material.needsUpdate = true
-          }
-        }
-      })
-    }
-  }, [scene, hovered])
-
-  // Change cursor on hover
-  useEffect(() => {
-    gl.domElement.style.cursor = hovered ? "pointer" : "grab"
-  }, [hovered, gl])
-
-  return (
-    <group ref={meshRef}>
-      <primitive
-        object={scene.clone()}
-        scale={modelUrl ? 1 : 0.8}
-        position={[0, modelUrl ? 0 : -0.5, 0]}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      >
-        {/* Brightness overlay effect */}
-        <meshStandardMaterial
-          attach="material"
-          color="#888888"
-          metalness={0.3}
-          roughness={0.4}
-          emissive="#D4A855"
-          emissiveIntensity={brightness - 1}
-        />
-      </primitive>
-    </group>
-  )
-}
-
-function PlaceholderHourglass() {
-  const groupRef = useRef<THREE.Group>(null)
-  const [hovered, setHovered] = useState(false)
-  const { gl } = useThree()
-
-  useFrame((state) => {
-    if (groupRef.current) {
-      // Subtle floating animation
-      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.05
-    }
-  })
-
-  useEffect(() => {
-    gl.domElement.style.cursor = hovered ? "pointer" : "grab"
-  }, [hovered, gl])
-
-  const glassColor = hovered ? "#E8C97A" : "#D4A855"
-  const frameColor = hovered ? "#888888" : "#666666"
-  const emissiveIntensity = hovered ? 0.4 : 0
-
-  return (
-    <group ref={groupRef} onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
-      {/* Top bulb */}
-      <mesh position={[0, 1.2, 0]} scale={[1, 1.2, 1]}>
-        <sphereGeometry args={[0.6, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshPhysicalMaterial
-          color={glassColor}
-          transparent
-          opacity={0.3}
-          metalness={0.1}
-          roughness={0.05}
-          transmission={0.6}
-          thickness={0.5}
-          emissive="#D4A855"
-          emissiveIntensity={emissiveIntensity}
-        />
-      </mesh>
-
-      {/* Top cone */}
-      <mesh position={[0, 0.7, 0]} rotation={[Math.PI, 0, 0]}>
-        <coneGeometry args={[0.6, 0.8, 32]} />
-        <meshPhysicalMaterial
-          color={glassColor}
-          transparent
-          opacity={0.3}
-          metalness={0.1}
-          roughness={0.05}
-          transmission={0.6}
-          thickness={0.5}
-          emissive="#D4A855"
-          emissiveIntensity={emissiveIntensity}
-        />
-      </mesh>
-
-      {/* Narrow middle */}
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.08, 0.08, 0.4, 16]} />
-        <meshPhysicalMaterial
-          color={glassColor}
-          transparent
-          opacity={0.4}
-          metalness={0.1}
-          roughness={0.05}
-          emissive="#D4A855"
-          emissiveIntensity={emissiveIntensity}
-        />
-      </mesh>
-
-      {/* Bottom cone */}
-      <mesh position={[0, -0.7, 0]}>
-        <coneGeometry args={[0.6, 0.8, 32]} />
-        <meshPhysicalMaterial
-          color={glassColor}
-          transparent
-          opacity={0.3}
-          metalness={0.1}
-          roughness={0.05}
-          transmission={0.6}
-          thickness={0.5}
-          emissive="#D4A855"
-          emissiveIntensity={emissiveIntensity}
-        />
-      </mesh>
-
-      {/* Bottom bulb */}
-      <mesh position={[0, -1.2, 0]} scale={[1, 1.2, 1]} rotation={[Math.PI, 0, 0]}>
-        <sphereGeometry args={[0.6, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshPhysicalMaterial
-          color={glassColor}
-          transparent
-          opacity={0.3}
-          metalness={0.1}
-          roughness={0.05}
-          transmission={0.6}
-          thickness={0.5}
-          emissive="#D4A855"
-          emissiveIntensity={emissiveIntensity}
-        />
-      </mesh>
-
-      {/* Top frame ring */}
-      <mesh position={[0, 1.8, 0]}>
-        <torusGeometry args={[0.65, 0.08, 16, 32]} />
-        <meshStandardMaterial
-          color={frameColor}
-          metalness={0.8}
-          roughness={0.2}
-          emissive="#D4A855"
-          emissiveIntensity={emissiveIntensity * 0.5}
-        />
-      </mesh>
-
-      {/* Bottom frame ring */}
-      <mesh position={[0, -1.8, 0]}>
-        <torusGeometry args={[0.65, 0.08, 16, 32]} />
-        <meshStandardMaterial
-          color={frameColor}
-          metalness={0.8}
-          roughness={0.2}
-          emissive="#D4A855"
-          emissiveIntensity={emissiveIntensity * 0.5}
-        />
-      </mesh>
-
-      {/* Support pillars */}
-      {[0, 1, 2, 3].map((i) => (
-        <mesh key={i} position={[Math.cos((i * Math.PI) / 2) * 0.5, 0, Math.sin((i * Math.PI) / 2) * 0.5]}>
-          <cylinderGeometry args={[0.04, 0.04, 3.6, 8]} />
-          <meshStandardMaterial
-            color={frameColor}
-            metalness={0.8}
-            roughness={0.2}
-            emissive="#D4A855"
-            emissiveIntensity={emissiveIntensity * 0.5}
-          />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
-function LoadingSpinner() {
-  return (
-    <mesh>
-      <sphereGeometry args={[0.2, 16, 16]} />
-      <meshBasicMaterial color="#D4A855" wireframe />
-    </mesh>
-  )
-}
-
 export function HourglassTimer({ timeRemaining, totalTime, isRunning, onTimeUpdate }: HourglassTimerProps) {
+  const progress = 1 - timeRemaining / totalTime
   const minutes = Math.floor(timeRemaining / 60)
   const seconds = timeRemaining % 60
 
-  const [modelUrl, setModelUrl] = useState<string | null>(null)
-
-  // Timer effect
   useEffect(() => {
     if (!isRunning || timeRemaining <= 0) return
 
@@ -239,76 +25,99 @@ export function HourglassTimer({ timeRemaining, totalTime, isRunning, onTimeUpda
   }, [isRunning, timeRemaining, onTimeUpdate])
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <div className="relative w-full max-w-sm aspect-[3/4] flex flex-col">
-        <div
-          className="flex-1 relative rounded-3xl backdrop-blur-xl bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 overflow-hidden transition-all duration-300 hover:border-white/20 hover:bg-white/[0.07]"
-          style={{
-            boxShadow: `
-              0 25px 50px -12px rgba(0, 0, 0, 0.4),
-              0 12px 24px -8px rgba(0, 0, 0, 0.3),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1)
-            `,
-          }}
-        >
-          {/* Three.js Canvas */}
-          <Canvas camera={{ position: [0, 0, 5], fov: 45 }} style={{ background: "transparent" }}>
-            <Suspense fallback={<LoadingSpinner />}>
-              {/* Lighting */}
-              <ambientLight intensity={0.4} />
-              <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
-              <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-              <pointLight position={[0, 3, 0]} intensity={0.5} color="#D4A855" />
+    <div className="relative flex flex-col items-center">
+      {/* Glow effect */}
+      <div className="absolute inset-0 blur-3xl bg-primary/20 animate-glow-pulse rounded-full" />
 
-              {/* Environment for reflections */}
-              <Environment preset="studio" />
+      {/* Hourglass container */}
+      <div className="relative w-48 h-72">
+        <svg viewBox="0 0 100 150" className="w-full h-full">
+          {/* Outer glow */}
+          <defs>
+            <linearGradient id="sandGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.6" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-              {/* Hourglass model - placeholder or custom */}
-              {modelUrl ? <HourglassModel modelUrl={modelUrl} /> : <PlaceholderHourglass />}
+          {/* Hourglass frame */}
+          <path
+            d="M20 10 L80 10 L80 15 Q80 40, 50 70 Q20 40, 20 15 Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-border"
+          />
+          <path
+            d="M20 140 L80 140 L80 135 Q80 110, 50 80 Q20 110, 20 135 Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-border"
+          />
 
-              {/* Contact shadow for depth */}
-              <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={4} blur={2} far={4} />
+          {/* Top sand (decreasing) */}
+          <clipPath id="topClip">
+            <path d="M22 12 L78 12 L78 15 Q78 40, 50 68 Q22 40, 22 15 Z" />
+          </clipPath>
+          <rect
+            x="20"
+            y={12 + progress * 56}
+            width="60"
+            height={58 - progress * 56}
+            fill="url(#sandGradient)"
+            clipPath="url(#topClip)"
+            filter="url(#glow)"
+          />
 
-              {/* Orbit controls - horizontal rotation only */}
-              <OrbitControls
-                enableZoom={false}
-                enablePan={false}
-                minPolarAngle={Math.PI / 3}
-                maxPolarAngle={Math.PI / 1.5}
-                rotateSpeed={0.5}
-              />
-            </Suspense>
-          </Canvas>
+          {/* Falling sand stream */}
+          {isRunning && progress < 1 && (
+            <line
+              x1="50"
+              y1="68"
+              x2="50"
+              y2="82"
+              stroke="var(--primary)"
+              strokeWidth="3"
+              strokeLinecap="round"
+              opacity="0.8"
+              className="animate-pulse"
+            />
+          )}
 
-          {/* Corner accents for depth */}
-          <div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-white/10 rounded-tl-lg pointer-events-none" />
-          <div className="absolute top-3 right-3 w-6 h-6 border-r-2 border-t-2 border-white/10 rounded-tr-lg pointer-events-none" />
-          <div className="absolute bottom-3 left-3 w-6 h-6 border-l-2 border-b-2 border-white/10 rounded-bl-lg pointer-events-none" />
-          <div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-white/10 rounded-br-lg pointer-events-none" />
+          {/* Bottom sand (increasing) */}
+          <clipPath id="bottomClip">
+            <path d="M22 138 L78 138 L78 135 Q78 110, 50 82 Q22 110, 22 135 Z" />
+          </clipPath>
+          <rect
+            x="20"
+            y={138 - progress * 56}
+            width="60"
+            height={progress * 56}
+            fill="url(#sandGradient)"
+            clipPath="url(#bottomClip)"
+            filter="url(#glow)"
+          />
 
-          {/* Interaction hint overlay */}
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
-            <div className="flex items-center gap-2 text-muted-foreground/60 bg-background/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 4h6v6M10 20H4v-6M20 4L10 14M4 20l10-10" />
-              </svg>
-              <span className="text-xs font-medium">Drag to rotate • Hover to brighten</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Label */}
-        <p className="text-xs text-muted-foreground/70 text-center mt-4 font-medium tracking-wide">
-          Interactive Hourglass (3D)
-        </p>
+          {/* Glass effect overlay */}
+          <path d="M25 15 Q25 38, 50 65 Q75 38, 75 15" fill="none" stroke="white" strokeWidth="0.5" opacity="0.1" />
+          <path d="M25 135 Q25 112, 50 85 Q75 112, 75 135" fill="none" stroke="white" strokeWidth="0.5" opacity="0.1" />
+        </svg>
       </div>
 
       {/* Time display */}
-      <div className="mt-8 text-center">
-        <p className="text-5xl font-light text-foreground tabular-nums tracking-tight">
+      <div className="mt-4 text-center">
+        <p className="text-4xl font-light text-foreground tabular-nums tracking-tight">
           {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
         </p>
-        <p className="text-sm text-muted-foreground mt-2">
+        <p className="text-sm text-muted-foreground mt-1">
           {isRunning ? "Stay focused..." : timeRemaining === totalTime ? "Ready to start" : "Paused"}
         </p>
       </div>
