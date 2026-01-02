@@ -8,4 +8,4 @@ pydantic-settings
 python-multipart
 passlib[bcrypt] 
 sqlalchemy
-psycopg2-binary
+psycopg2-binaryedge-tts

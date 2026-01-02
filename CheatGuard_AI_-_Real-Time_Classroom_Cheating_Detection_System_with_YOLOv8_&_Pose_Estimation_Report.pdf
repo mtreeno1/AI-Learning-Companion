@@ -1,0 +1,946 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 4170
+>>
+stream
+0.5670000000000001 w
+0 G
+0.14 0.27 0.39 rg
+0. 841.8899999999999864 595.2799999999999727 -113.3858267716535551 re
+f
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+1. g
+94.2399999999999238 771.0238582677164914 Td
+(CheatGuard AI - Real-Time Classroom Cheating) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+1. g
+82.9899999999999949 753.0238469291338106 Td
+(Detection System with YOLOv8 & Pose Estimation) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+1. g
+245.4849999999999568 723.6852529133858525 Td
+(Generated on: 12/27/2025) Tj
+ET
+0.94 g
+56.6929133858267775 714.3309448818897636 481.8941732283464034 -28.3464566929133888 re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 700.15771653543311 Td
+(PROJECT DETAILS) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 656.9766066141731926 Td
+(Description:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 628.9687256692913024 Td
+(Advanced AI-powered classroom monitoring system that detects cheating behaviors in real-time using) Tj
+T* (YOLOv8 object detection and pose estimation to identify phone usage, suspicious postures, unauthorized) Tj
+T* (movements, and document passing during examinations.) Tj
+ET
+0.86 G
+1.4173228346456694 w
+56.6929133858267775 573.4568957480314566 m
+538.5870866141731312 573.4568957480314566 l
+S
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 559.2836674015748031 Td
+(Technology Used:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 531.2757864566929129 Td
+(Django 5.0 | Python | YOLOv8 | YOLOv8-Pose | Ultralytics | OpenCV | NumPy | Pillow | HTML5 | CSS3 |) Tj
+T* (JavaScript | Chart.js | Three.js | SQLite) Tj
+ET
+0.86 G
+1.4173228346456694 w
+56.6929133858267775 485.7639628346456107 m
+538.5870866141731312 485.7639628346456107 l
+S
+0.94 g
+56.6929133858267775 471.5907344881889003 481.8941732283464034 -28.3464566929133888 re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 457.4175061417322468 Td
+(DETAILED DESCRIPTION) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 414.2363962204723293 Td
+(CheatGuard AI - Intelligent Classroom Cheating Detection System) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 381.5592245669290037 Td
+(CheatGuard AI is a cutting-edge artificial intelligence-powered examination monitoring solution designed to) Tj
+T* (maintain academic integrity in educational institutions. Built using advanced YOLOv8 deep learning models) Tj
+T* (and pose estimation algorithms, this system provides real-time detection of multiple cheating behaviors) Tj
+T* (including mobile phone usage, suspicious body postures, unauthorized movement, and document exchange) Tj
+T* (between students.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 308.8820277165352763 Td
+(Project Overview) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 270.5355647244092552 Td
+(This Django-based web application leverages state-of-the-art computer vision technology to automate the) Tj
+T* (tedious process of exam invigilation. The system processes both pre-recorded video footage and live) Tj
+T* (webcam feeds to identify potential cheating incidents with high accuracy, generating comprehensive) Tj
+T* (analytical reports with visual statistics and detailed timestamps of suspicious activities.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 207.8583741732281851 Td
+(Key Features and Capabilities) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 169.5119111811021639 Td
+(1. Mobile Phone Detection System) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 131.1654481889761428 Td
+(The system employs YOLOv8 object detection algorithm trained on extensive datasets to identify mobile) Tj
+T* (phones in the examination environment. It can detect phones in various orientations and lighting conditions,) Tj
+T* (instantly flagging any student attempting to use unauthorized electronic devices during tests. The detection) Tj
+T* (engine runs at real-time speeds, ensuring no suspicious activity goes unnoticed.) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.588 g
+492.8670866141731608 14.1732283464566535 Td
+(Page 1 of 5) Tj
+ET
+endstream
+endobj
+5 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 6 0 R
+>>
+endobj
+6 0 obj
+<<
+/Length 4262
+>>
+stream
+1.4173228346456694 w
+0.86 G
+0.14 0.27 0.39 rg
+0. 841.8899999999999864 595.2799999999999727 -56.6929133858267775 re
+f
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+1. g
+63.0999999999999517 799.3703149606299121 Td
+(CheatGuard AI - Real-Time Classroom Cheating Detection System with YOLOv8 & Pose) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+1. g
+269.7999999999999545 787.3703074015747916 Td
+(Estimation) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 756.8506299212598378 Td
+(2. Intelligent Posture Analysis) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 718.5041669291338167 Td
+(Using YOLOv8-Pose estimation technology, CheatGuard AI monitors each student's body posture throughout) Tj
+T* (the examination. The system identifies abnormal head angles, body positions, and suspicious movements) Tj
+T* (that may indicate looking at hidden materials or attempting to copy from neighboring students. Advanced) Tj
+T* (keypoint detection tracks 17 body landmarks to calculate posture angles and detect deviations from normal) Tj
+T* (exam-taking behavior.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 645.8269700787401462 Td
+(3. Position Tracking and Movement Detection) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 607.480507086614125 Td
+(The application continuously monitors student positions within the examination hall. It tracks whether) Tj
+T* (students remain seated in their designated areas and alerts supervisors if anyone leaves their seat without) Tj
+T* (authorization. The position tracking system uses bounding box coordinates and centroid tracking algorithms) Tj
+T* (to maintain persistent identity tracking across video frames.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 544.8033165354330549 Td
+(4. Document Passing Detection) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 506.4568535433070338 Td
+(One of the most sophisticated features is the hand-to-hand document exchange detection system. By) Tj
+T* (analyzing hand proximity between students and tracking object transfer patterns, the system can identify) Tj
+T* (when students are passing notes, cheat sheets, or answer papers to each other. This feature uses advanced) Tj
+T* (spatial relationship analysis and temporal tracking to minimize false positives.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 443.7796629921259068 Td
+(5. Real-Time Live Monitoring Dashboard) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 405.4331999999999425 Td
+(The web-based dashboard features a modern glassmorphism design with Three.js animated backgrounds,) Tj
+T* (providing an intuitive interface for examination supervisors. Real-time statistics are displayed using Chart.js) Tj
+T* (visualizations, showing detection counts, confidence scores, and temporal distribution of cheating incidents.) Tj
+T* (The dashboard updates dynamically as the AI engine processes video feeds.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 342.7560094488188156 Td
+(6. Video Upload and Batch Processing) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 304.4095464566928513 Td
+(Users can upload pre-recorded examination videos for retrospective analysis. The drag-and-drop interface) Tj
+T* (supports multiple video formats and displays upload progress with estimated processing time. Once) Tj
+T* (uploaded, videos are automatically queued for AI analysis, with processed results saved for future reference) Tj
+T* (and report generation.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 241.7323559055116675 Td
+(7. Comprehensive Analytics and Reporting) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 203.3858929133856464 Td
+(After processing, the system generates detailed analytical reports containing timestamps of all detected) Tj
+T* (incidents, confidence scores, incident categories, and visual evidence with bounding boxes drawn on) Tj
+T* (detected objects. These reports can be exported for administrative review and record-keeping purposes.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 150.7087086614171767 Td
+(Technical Architecture) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.588 g
+492.8670866141731608 14.1732283464566535 Td
+(Page 2 of 5) Tj
+ET
+endstream
+endobj
+7 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 8 0 R
+>>
+endobj
+8 0 obj
+<<
+/Length 4007
+>>
+stream
+1.4173228346456694 w
+0.86 G
+0.14 0.27 0.39 rg
+0. 841.8899999999999864 595.2799999999999727 -56.6929133858267775 re
+f
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+1. g
+63.0999999999999517 799.3703149606299121 Td
+(CheatGuard AI - Real-Time Classroom Cheating Detection System with YOLOv8 & Pose) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+1. g
+269.7999999999999545 787.3703074015747916 Td
+(Estimation) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 756.8506299212598378 Td
+(Backend Framework) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 718.5041669291338167 Td
+(Built on Django 5.0, the backend provides robust model-view-template architecture, efficient database) Tj
+T* (operations, and secure user authentication. Django's ORM handles storage of detection results, user data,) Tj
+T* (and video metadata in a SQLite database that can be easily migrated to PostgreSQL or MySQL for) Tj
+T* (production deployments.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 655.8269763779527466 Td
+(Artificial Intelligence Engine) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 617.4805133858267254 Td
+(The AI core utilizes Ultralytics YOLOv8, the latest version of the You Only Look Once object detection family.) Tj
+T* (YOLOv8 offers superior speed and accuracy compared to previous versions, making it ideal for real-time) Tj
+T* (video analysis. The system uses two specialized models: YOLOv8 for object detection \(phones, documents\)) Tj
+T* (and YOLOv8-Pose for human keypoint detection and posture analysis.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 554.8033228346455417 Td
+(Video Processing Pipeline) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 516.4568598425196342 Td
+(OpenCV handles all video capture, frame extraction, and image preprocessing operations. The pipeline reads) Tj
+T* (video streams frame-by-frame, applies the YOLO models for inference, draws detection overlays, and writes) Tj
+T* (processed frames to output video files. Multi-threading capabilities ensure smooth processing even with) Tj
+T* (high-resolution video inputs.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 453.7796692913384504 Td
+(Frontend Design) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 415.4332062992124861 Td
+(The user interface features modern HTML5, CSS3, and JavaScript with glassmorphism aesthetic principles.) Tj
+T* (Three.js creates immersive 3D animated backgrounds that enhance visual appeal without compromising) Tj
+T* (functionality. Chart.js generates interactive graphs showing detection statistics over time, incident type) Tj
+T* (distributions, and confidence score histograms.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 352.7560157480313592 Td
+(Real-World Applications) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 314.409552755905338 Td
+(Educational Institutions) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 276.0630897637793169 Td
+(Universities, colleges, and schools can deploy CheatGuard AI in examination halls to reduce the burden on) Tj
+T* (human invigilators while increasing detection accuracy. The system can monitor multiple camera feeds) Tj
+T* (simultaneously, covering large examination halls with hundreds of students.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 223.3859055118108472 Td
+(Online Examination Platforms) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 185.039442519684826 Td
+(E-learning platforms conducting remote proctored exams can integrate CheatGuard AI to monitor students) Tj
+T* (through their webcams, ensuring academic integrity in distance learning scenarios. The system can flag) Tj
+T* (suspicious behavior for manual review by human proctors.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 132.3622582677163564 Td
+(Competitive Examinations) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.588 g
+492.8670866141731608 14.1732283464566535 Td
+(Page 3 of 5) Tj
+ET
+endstream
+endobj
+9 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 10 0 R
+>>
+endobj
+10 0 obj
+<<
+/Length 4373
+>>
+stream
+1.4173228346456694 w
+0.86 G
+0.14 0.27 0.39 rg
+0. 841.8899999999999864 595.2799999999999727 -56.6929133858267775 re
+f
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+1. g
+63.0999999999999517 799.3703149606299121 Td
+(CheatGuard AI - Real-Time Classroom Cheating Detection System with YOLOv8 & Pose) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+1. g
+269.7999999999999545 787.3703074015747916 Td
+(Estimation) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 756.8506299212598378 Td
+(Organizations conducting high-stakes competitive exams can use this technology to maintain fairness and) Tj
+T* (credibility. The automated detection system provides evidence-based incident reports that can be used in) Tj
+T* (disciplinary proceedings if needed.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 704.1734456692913682 Td
+(Research and Development) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 665.826982677165347 Td
+(The project serves as an excellent foundation for computer vision research in behavior analysis, anomaly) Tj
+T* (detection, and human activity recognition. Researchers can extend the detection capabilities to identify) Tj
+T* (additional behaviors or adapt the system for other surveillance applications.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 613.1497984251968774 Td
+(Project Benefits) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 574.8033354330707425 Td
+(Automated Monitoring: Reduces dependence on human invigilators, allowing them to focus on critical) Tj
+T* (supervision tasks rather than continuous observation) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 532.126157480314987 Td
+(Objective Detection: Eliminates human bias and fatigue factors, providing consistent and fair monitoring) Tj
+T* (throughout examination duration) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 489.4489795275590041 Td
+(Evidence-Based Records: Creates timestamped video evidence of all detected incidents, supporting) Tj
+T* (transparent disciplinary processes) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 446.7718015748031348 Td
+(Scalable Solution: Can monitor multiple camera feeds and large examination halls simultaneously without) Tj
+T* (performance degradation) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 404.0946236220472088 Td
+(Deterrent Effect: The presence of AI monitoring systems discourages students from attempting to cheat,) Tj
+T* (promoting honest exam-taking behavior) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 361.4174456692912258 Td
+(Cost-Effective: After initial setup, the system operates with minimal ongoing costs compared to hiring) Tj
+T* (additional human invigilators) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 318.7402677165352998 Td
+(Real-Time Alerts: Provides instant notifications to supervisors, enabling immediate intervention when) Tj
+T* (suspicious behavior is detected) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 276.0630897637793169 Td
+(Future Enhancement Possibilities) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 237.7166267716532957 Td
+(The system architecture supports future expansions including: eye gaze tracking using specialized models,) Tj
+T* (audio analysis to detect whispered conversations, multi-camera fusion for 360-degree coverage, integration) Tj
+T* (with student information systems for automated report generation, mobile app for supervisors to receive push) Tj
+T* (notifications, and cloud deployment for centralized monitoring across multiple examination centers.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 175.0394362204722256 Td
+(Learning Outcomes for Students) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 136.6929732283462045 Td
+(Implementing this project provides hands-on experience with deep learning frameworks, computer vision) Tj
+T* (algorithms, video processing techniques, web application development with Django, frontend design with) Tj
+T* (modern JavaScript libraries, real-time data visualization, database design and management, RESTful API) Tj
+T* (development, and deployment of AI-powered web applications. Students gain practical knowledge of) Tj
+T* (integrating multiple technologies to solve complex real-world problems.) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.588 g
+492.8670866141731608 14.1732283464566535 Td
+(Page 4 of 5) Tj
+ET
+endstream
+endobj
+11 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 12 0 R
+>>
+endobj
+12 0 obj
+<<
+/Length 1872
+>>
+stream
+1.4173228346456694 w
+0.86 G
+0.14 0.27 0.39 rg
+0. 841.8899999999999864 595.2799999999999727 -56.6929133858267775 re
+f
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+1. g
+63.0999999999999517 799.3703149606299121 Td
+(CheatGuard AI - Real-Time Classroom Cheating Detection System with YOLOv8 & Pose) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+1. g
+269.7999999999999545 787.3703074015747916 Td
+(Estimation) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 756.8506299212598378 Td
+(Why Choose This Project?) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+56.6929133858267775 718.5041669291338167 Td
+(CheatGuard AI represents an excellent final year project because it addresses a genuine problem faced by) Tj
+T* (educational institutions worldwide. The project demonstrates proficiency in artificial intelligence, computer) Tj
+T* (vision, web development, and system design. It showcases the ability to integrate cutting-edge technologies) Tj
+T* (like YOLOv8 with traditional web frameworks to create a practical, deployable solution. The comprehensive) Tj
+T* (feature set, modern UI design, and real-world applicability make this project an impressive addition to any) Tj
+T* (student portfolio, demonstrating both technical competence and problem-solving abilities to potential) Tj
+T* (employers.) Tj
+ET
+0.96 g
+0. 85.0393700787401627 595.2799999999999727 -85.0393700787401627 re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0.137 0.275 0.392 rg
+56.6929133858267775 51.0236220472440891 Td
+(CodeAj Marketplace) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.392 g
+56.6929133858267775 36.8503937007874356 Td
+(Your trusted source for quality project solutions) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.392 g
+56.6929133858267775 22.6771653543306684 Td
+(Visit us at: projects.codeaj.com) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.588 g
+492.8670866141731608 14.1732283464566535 Td
+(Page 5 of 5) Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R 5 0 R 7 0 R 9 0 R 11 0 R ]
+/Count 5
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+15 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+16 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+19 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+20 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+21 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+22 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+23 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+24 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+25 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+26 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 13 0 R
+/F2 14 0 R
+/F3 15 0 R
+/F4 16 0 R
+/F5 17 0 R
+/F6 18 0 R
+/F7 19 0 R
+/F8 20 0 R
+/F9 21 0 R
+/F10 22 0 R
+/F11 23 0 R
+/F12 24 0 R
+/F13 25 0 R
+/F14 26 0 R
+>>
+/XObject <<
+>>
+>>
+endobj
+27 0 obj
+<<
+/Producer (jsPDF 3.0.4)
+/CreationDate (D:20251227122934+07'00')
+>>
+endobj
+28 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 29
+0000000000 65535 f 
+0000019649 00000 n 
+0000021496 00000 n 
+0000000015 00000 n 
+0000000152 00000 n 
+0000004374 00000 n 
+0000004511 00000 n 
+0000008825 00000 n 
+0000008962 00000 n 
+0000013021 00000 n 
+0000013159 00000 n 
+0000017585 00000 n 
+0000017724 00000 n 
+0000019731 00000 n 
+0000019857 00000 n 
+0000019988 00000 n 
+0000020122 00000 n 
+0000020260 00000 n 
+0000020384 00000 n 
+0000020513 00000 n 
+0000020645 00000 n 
+0000020781 00000 n 
+0000020909 00000 n 
+0000021036 00000 n 
+0000021165 00000 n 
+0000021298 00000 n 
+0000021400 00000 n 
+0000021749 00000 n 
+0000021835 00000 n 
+trailer
+<<
+/Size 29
+/Root 28 0 R
+/Info 27 0 R
+/ID [ <4A2BE3E5441459CCB5DE33E207C46193> <4A2BE3E5441459CCB5DE33E207C46193> ]
+>>
+startxref
+21939
+%%EOF
