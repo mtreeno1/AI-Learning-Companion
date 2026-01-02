@@ -3,4 +3,9 @@ opencv-python
 numpy
 fastapi
 uvicorn
-edge-tts
+pydantic[email]
+pydantic-settings
+python-multipart
+passlib[bcrypt] 
+sqlalchemy
+psycopg2-binaryedge-tts
