@@ -84,9 +84,8 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
-app.include_router(focus_router, prefix="/api/focus", tags=["Focus Detection"])  # ✅ Make sure this line exists
-
+app.include_router(auth_router, tags=["Authentication"])
+app.include_router(focus_router, tags=["Focus Detection"])
 
 @app.get("/")
 def read_root():
