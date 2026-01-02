@@ -6,6 +6,6 @@ uvicorn
 pydantic[email]
 pydantic-settings
 python-multipart
-passlib[bcrypt] 
+passlib[argon2]
 sqlalchemy
 psycopg2-binaryedge-tts
