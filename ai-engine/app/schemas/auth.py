@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-
+from sqlalchemy.dialects.postgresql import UUID
 
 class SignupRequest(BaseModel):
    """Request schema for user signup"""
@@ -21,7 +21,6 @@ class LogoutRequest(BaseModel):
 
 class UserResponse(BaseModel):
    """Response schema for user data"""
-   id: str
    email: str
    name: str
    token: str

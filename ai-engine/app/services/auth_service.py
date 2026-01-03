@@ -6,17 +6,18 @@ from app.models.session import SessionToken
 from app.dependencies import (
     hash_password,
     verify_password,
-    generate_token,
-    generate_user_id
+    generate_token
 )
 from app.config import settings
-
+from jose import jwt
 
 class AuthService:
     """Service for handling authentication logic"""
     
     @staticmethod
     def signup(db: Session, name: str, email: str, password: str) -> dict:
+        """Register new user and return JWT token"""
+        
         # Check if user already exists
         existing_user = db.query(User).filter(User.email == email).first()
         if existing_user:
@@ -25,12 +26,13 @@ class AuthService:
                 detail="Email already registered"
             )
         
-        # Create new user
-        user_id = generate_user_id()
+        # Hash password
         hashed_pwd = hash_password(password)
         
+        # ✅ Create new user WITHOUT id parameter
+        # SQLAlchemy will auto-generate UUID via default=uuid.uuid4
         new_user = User(
-            id=user_id,
+            # ❌ DELETE:  id=generate_user_id()
             email=email,
             name=name,
             password=hashed_pwd,
@@ -39,29 +41,44 @@ class AuthService:
         
         db.add(new_user)
         db.commit()
-        db.refresh(new_user)
+        db.refresh(new_user)  # ✅ After this, new_user. id will have UUID value
         
-        # Create session token
-        token = generate_token()
-        new_session = SessionToken(
-            token=token,
-            user_id=user_id,
-            email=email,
-            expires_at=datetime.utcnow() + timedelta(days=settings.TOKEN_EXPIRY_DAYS)
+        # ✅ Debug
+        print(f"✅ Created user: {new_user. email}")
+        print(f"✅ User ID: {new_user.id} (type: {type(new_user.id)})")
+        
+        # ✅ Create JWT token
+        access_token_expires = timedelta(days=settings.TOKEN_EXPIRY_DAYS)
+        expire = datetime.utcnow() + access_token_expires
+        
+        to_encode = {
+            "sub": str(new_user.id),  # ✅ Convert UUID to string
+            "email": new_user.email,
+            "name": new_user.name,
+            "exp": expire,
+        }
+        
+        print(f"✅ JWT payload: {to_encode}")
+        
+        access_token = jwt.encode(
+            to_encode,
+            settings.SECRET_KEY,
+            algorithm=settings.ALGORITHM
         )
         
-        db.add(new_session)
-        db.commit()
+        print(f"✅ Generated JWT: {access_token[:50]}...")
         
         return {
-            "id": user_id,
-            "email": email,
-            "name": name,
-            "token": token
+            "id": str(new_user.id),  # ✅ Convert UUID to string for JSON
+            "email": new_user.email,
+            "name": new_user. name,
+            "token": access_token
         }
     
     @staticmethod
-    def login(db: Session, email: str, password: str) -> dict:
+    def login(db:  Session, email: str, password:  str) -> dict:
+        """Login user and return JWT token"""
+        
         # Check if user exists
         user = db.query(User).filter(User.email == email).first()
         if not user:
@@ -71,29 +88,41 @@ class AuthService:
             )
         
         # Verify password
-        if not verify_password(password, user.password):
+        if not verify_password(password, user. password):
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+                status_code=status. HTTP_401_UNAUTHORIZED,
                 detail="Invalid email or password"
             )
         
-        # Create session token
-        token = generate_token()
-        new_session = SessionToken(
-            token=token,
-            user_id=user.id,
-            email=email,
-            expires_at=datetime.utcnow() + timedelta(days=settings.TOKEN_EXPIRY_DAYS)
-        )
+        # ✅ CREATE JWT TOKEN (NOT SESSION TOKEN)
+        access_token_expires = timedelta(days=settings.TOKEN_EXPIRY_DAYS)
+        expire = datetime.utcnow() + access_token_expires
         
-        db.add(new_session)
-        db.commit()
-        
-        return {
-            "id": user.id,
+        # ✅ Create payload
+        to_encode = {
+            "sub": str(user.id),  # ✅ IMPORTANT: user. id as string
             "email": user.email,
             "name": user.name,
-            "token": token
+            "exp": expire,
+        }
+        
+        # ✅ Encode JWT
+        access_token = jwt.encode(
+            to_encode,
+            settings.SECRET_KEY,
+            algorithm=settings.ALGORITHM
+        )
+        
+        # ✅ Debug logging
+        print(f"✅ Login successful for:  {user.email}")
+        print(f"✅ Generated JWT token with {len(access_token.split('.'))} parts")
+        print(f"✅ Token preview: {access_token[:50]}...")
+        
+        return {
+            "id": user. id,
+            "email": user.email,
+            "name":  user.name,
+            "token": access_token  # ✅ Return JWT token
         }
     
     @staticmethod

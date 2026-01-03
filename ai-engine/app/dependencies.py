@@ -59,23 +59,12 @@ def generate_token() -> str:
     return secrets.token_urlsafe(32)
 
 
-def generate_user_id() -> str:
-    """Generate a random user ID"""
-    return secrets.token_urlsafe(16)
-
-
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ) -> User:
-    """
-    Dependency to get current authenticated user from JWT token
+    """Get current authenticated user from JWT token"""
     
-    Usage:
-        @router.get("/protected")
-        def protected_route(current_user: User = Depends(get_current_user)):
-            return {"user":  current_user. username}
-    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -83,36 +72,45 @@ def get_current_user(
     )
     
     try:
-        # Get token from Authorization header
         token = credentials.credentials
         
-        # Decode JWT token
+        # ✅ Debug
+        print(f"Received token: {token[: 50]}...")
+        print(f"Token parts: {len(token.split('.'))}")
+        
+        # ✅ Validate JWT format
+        if len(token.split('.')) != 3:
+            print(f"❌ Invalid JWT format: only {len(token.split('.'))} parts")
+            raise credentials_exception
+        
+        # ✅ Decode JWT token
         payload = jwt.decode(
             token,
             settings.SECRET_KEY,
             algorithms=[settings.ALGORITHM]
         )
         
-        # Extract user_id from token
+        print(f"✅ Decoded payload: {payload}")
+        
+        # ✅ Extract user_id from 'sub' claim
         user_id:  str = payload.get("sub")
         if user_id is None:
+            print("❌ No 'sub' claim in token")
             raise credentials_exception
+        
             
-    except JWTError:
+    except JWTError as e: 
+        print(f"❌ JWT decode error: {str(e)}")
         raise credentials_exception
     
-    # Get user from database
-    user = db.query(User).filter(User.user_id == user_id).first()
+    # ✅ Get user from database
+    user = db.query(User).filter(User.id == user_id).first()
     
     if user is None:
+        print(f"❌ User not found with id: {user_id}")
         raise credentials_exception
     
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is inactive"
-        )
-    
+    print(f"✅ User authenticated: {user.email}")
     return user
 
 

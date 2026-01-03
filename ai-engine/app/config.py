@@ -1,10 +1,20 @@
 from pydantic_settings import BaseSettings
-
-
+from pydantic import Field
 class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost/focusflow"
-    
+    SECRET_KEY: str = Field(alias="SECRET_KEY")
+    ALGORITHM: str = Field(default="HS256", alias="ALGORITHM")
+
+
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
+        default=30,
+        alias="ACCESS_TOKEN_EXPIRE_MINUTES",   # LƯU Ý: alias UPPERCASE
+    )
+
+    DEBUG: bool = Field(default=True, alias="DEBUG")
+    ENVIRONMENT: str = Field(default="development", alias="ENVIRONMENT")
+
     # API
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000

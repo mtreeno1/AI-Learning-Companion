@@ -14,7 +14,6 @@ class FocusDetectionService:
     """
     AI Service for detecting focus/distraction using YOLO
     """
-    
     def __init__(self, model_path: str = "yolov8n.pt"):
         """
         Initialize YOLO model
@@ -31,7 +30,7 @@ class FocusDetectionService:
         self.alert_cooldown = 3  # seconds between alerts
         
         # Detection thresholds
-        self. PERSON_CONFIDENCE_THRESHOLD = 0.5
+        self. PERSON_CONFIDENCE_THRESHOLD = 0.3
         self.PHONE_CONFIDENCE_THRESHOLD = 0.4
         self.NO_PERSON_TIMEOUT = 5  # seconds before "no person" alert
         
