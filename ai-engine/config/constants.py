@@ -67,29 +67,29 @@ Configuration constants for Focus Scoring System
 INITIAL_FOCUS_SCORE = 100.0
 
 # ==================== EVENT PENALTIES (Discrete) ====================
-PENALTY_PHONE_DETECTED = 5.0
-PENALTY_LEFT_SEAT = 5.0
+PENALTY_PHONE_DETECTED = 3.0  # Reduced for smoother score changes
+PENALTY_LEFT_SEAT = 3.0  # Reduced for smoother score changes
 
 # ==================== TIME-BASED PENALTIES (per second) ====================
 PENALTY_FACE_MISSING_PER_SEC = 2.0
 
 # Minimum duration before applying time-based penalty
-MIN_DURATION_FOR_PENALTY = 2.0  # seconds
+MIN_DURATION_FOR_PENALTY = 1.0  # seconds - faster response
 
 # ==================== RECOVERY ====================
-RECOVERY_RATE_PER_SEC = 0.5  # điểm/giây
+RECOVERY_RATE_PER_SEC = 1.0  # điểm/giây - faster recovery for better responsiveness
 MAX_RECOVERY_PER_UPDATE = 10.0
 
 # ==================== DETECTION THRESHOLDS ====================
 # Phone detection confidence
-PHONE_CONFIDENCE_THRESHOLD = 0.5
+PHONE_CONFIDENCE_THRESHOLD = 0.35  # Lowered for better detection
 
 # Face detection timeout (để xác định left seat)
-FACE_MISSING_TIMEOUT = 1.0  # seconds - không thấy mặt > 3s = rời chỗ ngồi
+FACE_MISSING_TIMEOUT = 0.5  # seconds - faster left seat detection
 
 # ==================== ALERT SYSTEM ====================
-ALERT_COOLDOWN = 5.0  # seconds - không cảnh báo liên tục
-ALERT_TRIGGER_DURATION = 5.0  # seconds - mất tập trung > 5s mới báo
+ALERT_COOLDOWN = 3.0  # seconds - more frequent alerts for better responsiveness
+ALERT_TRIGGER_DURATION = 3.0  # seconds - faster alert triggering
 ALERT_SCORE_THRESHOLD = 65.0  # dưới 65 điểm mới cảnh báo
 
 # ==================== EMA SMOOTHING ====================

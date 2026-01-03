@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Dict, Optional
 import base64
 from uuid import UUID
+import gc  # For memory management
 
 from app.database import get_db
 from app.models.learning_session import LearningSession
@@ -265,7 +266,7 @@ async def websocket_endpoint(
     
     # Batch database commits counter
     frame_count = 0
-    commit_interval = 5  # Commit every 5 frames
+    commit_interval = 10  # Commit every 10 frames for better performance
     
     try:
         while True:
@@ -295,15 +296,17 @@ async def websocket_endpoint(
                 })
                 continue
             
-            # ✅ Run AI detection
+            # ✅ Run AI detection (without annotation to save memory)
             try:
-                result, _ = focus_service. process_webcam_frame(frame_data)
+                result, _ = focus_service.process_webcam_frame(frame_data, annotate=False)
             except Exception as e:
                 print(f"❌ AI detection error: {e}")
                 await websocket.send_json({
                     "error": f"Detection failed: {str(e)}",
                     "timestamp": now_utc().isoformat()
                 })
+                # Clean up on error
+                del frame_data
                 continue
             
             # ✅ Update frame counters
@@ -336,8 +339,8 @@ async def websocket_endpoint(
                 result["alert_type"] = "urgent"
             
             # Person detection - check for leaving seat
-            # Consider left seat if:  no person OR very low confidence
-            if not person_detected or person_confidence < 0.3:
+            # Consider left seat if: no person OR very low confidence
+            if not person_detected or person_confidence < 0.25:  # Lowered threshold for better detection
                 session.left_seat_count += 1
                 session.total_violations += 1
                 violation_occurred = True
@@ -345,19 +348,19 @@ async def websocket_endpoint(
                 
                 # Override alert message
                 if not person_detected:
-                    result["message"] = "⚠️ Không phát hiện người!  Vui lòng quay lại ghế."
+                    result["message"] = "⚠️ Không phát hiện người! Vui lòng quay lại ghế."
                 else:
-                    result["message"] = "⚠️ Có vẻ bạn đang rời khỏi ghế.  Hãy ngồi thẳng!"
+                    result["message"] = "⚠️ Có vẻ bạn đang rời khỏi ghế. Hãy ngồi thẳng!"
                 result["alert_type"] = "urgent"
             
             # ✅ Track consecutive violations for escalating alerts
             if violation_occurred:
                 session_data[session_id]["consecutive_violations"] += 1
                 
-                # Escalate alert if too many consecutive violations
-                if session_data[session_id]["consecutive_violations"] >= 3:
+                # Escalate alert if too many consecutive violations - reduced threshold for faster response
+                if session_data[session_id]["consecutive_violations"] >= 2:
                     result["alert_type"] = "critical"
-                    result["message"] = "🚨 CẢNH BÁO:  Nhiều vi phạm liên tiếp!  Hãy tập trung!"
+                    result["message"] = "🚨 CẢNH BÁO: Nhiều vi phạm liên tiếp! Hãy tập trung!"
             else:
                 session_data[session_id]["consecutive_violations"] = 0
             
@@ -374,13 +377,13 @@ async def websocket_endpoint(
             current_score = session_data[session_id]["last_score"]
             
             if violation_occurred:
-                # Decrease score based on violation severity
-                penalty = 3.0 if violation_type == "phone" else 2.0
+                # Decrease score based on violation severity - reduced penalties for smoother experience
+                penalty = 2.0 if violation_type == "phone" else 1.5
                 current_score = max(0.0, current_score - penalty)
             else:
-                # Slowly recover score (0.15 per focused frame)
+                # Faster recovery score (0.2 per focused frame)
                 if is_focused:
-                    current_score = min(100.0, current_score + 0.15)
+                    current_score = min(100.0, current_score + 0.2)
             
             session_data[session_id]["last_score"] = current_score
             session.current_score = current_score
@@ -407,6 +410,10 @@ async def websocket_endpoint(
                 except Exception as e:
                     print(f"❌ Failed to commit session update: {e}")
                     db.rollback()
+            
+            # ✅ Periodic garbage collection (every 100 frames to prevent memory buildup)
+            if frame_count % 100 == 0:
+                gc.collect()
             
             # ✅ Prepare response
             response = {
@@ -465,7 +472,7 @@ async def websocket_endpoint(
             print(f"📊 Session {session_id} stats:")
             print(f"   Total frames: {final_stats['total_frames']}")
             print(f"   Focused frames:  {final_stats['focused_frames']}")
-            print(f"   Final score: {final_stats['last_score']:. 1f}")
+            print(f"   Final score: {final_stats['last_score']:.1f}")
             del session_data[session_id]
     
     except Exception as e:

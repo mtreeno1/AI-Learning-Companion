@@ -27,17 +27,17 @@ class FocusDetectionService:
         
         # Alert management
         self.last_alert_time = None
-        self.alert_cooldown = 3  # seconds between alerts
+        self.alert_cooldown = 2  # seconds - reduced for faster alerts
         
         # Detection thresholds
-        self. PERSON_CONFIDENCE_THRESHOLD = 0.3
-        self.PHONE_CONFIDENCE_THRESHOLD = 0.4
-        self.NO_PERSON_TIMEOUT = 5  # seconds before "no person" alert
+        self.PERSON_CONFIDENCE_THRESHOLD = 0.3
+        self.PHONE_CONFIDENCE_THRESHOLD = 0.35  # Lowered for better detection
+        self.NO_PERSON_TIMEOUT = 2  # seconds - faster response before "no person" alert
         
         # State tracking
         self.no_person_start_time = None
-        self. consecutive_phone_detections = 0
-        self.phone_detection_threshold = 3  # frames before alert
+        self.consecutive_phone_detections = 0
+        self.phone_detection_threshold = 2  # Reduced frames before alert for faster response
         
     def detect_frame(self, frame: np.ndarray) -> Dict: 
         """
@@ -224,15 +224,16 @@ class FocusDetectionService:
         
         return False
     
-    def process_webcam_frame(self, frame_data: bytes) -> Tuple[Dict, np.ndarray]:
+    def process_webcam_frame(self, frame_data: bytes, annotate: bool = False) -> Tuple[Dict, Optional[np.ndarray]]:
         """
         Process webcam frame from base64 or raw bytes
         
         Args:
             frame_data: Raw image bytes (JPEG/PNG)
+            annotate: Whether to return annotated frame (default: False to save memory)
             
         Returns: 
-            (detection_result, annotated_frame)
+            (detection_result, annotated_frame or None)
         """
         # Decode frame
         nparr = np.frombuffer(frame_data, np.uint8)
@@ -244,8 +245,15 @@ class FocusDetectionService:
         # Run detection
         result = self.detect_frame(frame)
         
-        # Annotate frame with bounding boxes
-        annotated_frame = self._annotate_frame(frame, result)
+        # Optionally annotate frame with bounding boxes
+        if annotate:
+            annotated_frame = self._annotate_frame(frame, result)
+        else:
+            annotated_frame = None
+        
+        # Explicitly delete frame to free memory after use
+        del frame
+        del nparr
         
         return result, annotated_frame
     
