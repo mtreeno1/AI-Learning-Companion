@@ -27,7 +27,7 @@ class FocusDetectionService:
         
         # Alert management
         self.last_alert_time = None
-        self.alert_cooldown = 3  # seconds between alerts
+        self.alert_cooldown = 2  # seconds - reduced for faster alerts
         
         # Detection thresholds
         self. PERSON_CONFIDENCE_THRESHOLD = 0.3
