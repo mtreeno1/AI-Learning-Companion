@@ -472,7 +472,7 @@ async def websocket_endpoint(
             print(f"📊 Session {session_id} stats:")
             print(f"   Total frames: {final_stats['total_frames']}")
             print(f"   Focused frames:  {final_stats['focused_frames']}")
-            print(f"   Final score: {final_stats['last_score']:. 1f}")
+            print(f"   Final score: {final_stats['last_score']:.1f}")
             del session_data[session_id]
     
     except Exception as e:
