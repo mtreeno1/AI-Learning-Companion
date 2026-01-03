@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Dict, Optional
 import base64
 from uuid import UUID
+import gc  # For memory management
 
 from app.database import get_db
 from app.models.learning_session import LearningSession
@@ -295,15 +296,17 @@ async def websocket_endpoint(
                 })
                 continue
             
-            # ✅ Run AI detection
+            # ✅ Run AI detection (without annotation to save memory)
             try:
-                result, _ = focus_service. process_webcam_frame(frame_data)
+                result, _ = focus_service.process_webcam_frame(frame_data, annotate=False)
             except Exception as e:
                 print(f"❌ AI detection error: {e}")
                 await websocket.send_json({
                     "error": f"Detection failed: {str(e)}",
                     "timestamp": now_utc().isoformat()
                 })
+                # Clean up on error
+                del frame_data
                 continue
             
             # ✅ Update frame counters
@@ -404,6 +407,8 @@ async def websocket_endpoint(
             if frame_count % commit_interval == 0:
                 try:
                     db.commit()
+                    # Periodic garbage collection to free memory
+                    gc.collect()
                 except Exception as e:
                     print(f"❌ Failed to commit session update: {e}")
                     db.rollback()
@@ -447,6 +452,10 @@ async def websocket_endpoint(
             
             # ✅ Send response immediately
             await websocket.send_json(response)
+            
+            # ✅ Cleanup frame data to free memory
+            del frame_data
+            del result
     
     except WebSocketDisconnect:
         print(f"🔌 WebSocket disconnected for session {session_id}")

@@ -224,15 +224,16 @@ class FocusDetectionService:
         
         return False
     
-    def process_webcam_frame(self, frame_data: bytes) -> Tuple[Dict, np.ndarray]:
+    def process_webcam_frame(self, frame_data: bytes, annotate: bool = False) -> Tuple[Dict, Optional[np.ndarray]]:
         """
         Process webcam frame from base64 or raw bytes
         
         Args:
             frame_data: Raw image bytes (JPEG/PNG)
+            annotate: Whether to return annotated frame (default: False to save memory)
             
         Returns: 
-            (detection_result, annotated_frame)
+            (detection_result, annotated_frame or None)
         """
         # Decode frame
         nparr = np.frombuffer(frame_data, np.uint8)
@@ -244,8 +245,12 @@ class FocusDetectionService:
         # Run detection
         result = self.detect_frame(frame)
         
-        # Annotate frame with bounding boxes
-        annotated_frame = self._annotate_frame(frame, result)
+        # Optionally annotate frame with bounding boxes
+        annotated_frame = self._annotate_frame(frame, result) if annotate else None
+        
+        # Explicitly delete frame to free memory
+        del frame
+        del nparr
         
         return result, annotated_frame
     
