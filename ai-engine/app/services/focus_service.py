@@ -246,9 +246,12 @@ class FocusDetectionService:
         result = self.detect_frame(frame)
         
         # Optionally annotate frame with bounding boxes
-        annotated_frame = self._annotate_frame(frame, result) if annotate else None
+        if annotate:
+            annotated_frame = self._annotate_frame(frame, result)
+        else:
+            annotated_frame = None
         
-        # Explicitly delete frame to free memory
+        # Explicitly delete frame to free memory after use
         del frame
         del nparr
         

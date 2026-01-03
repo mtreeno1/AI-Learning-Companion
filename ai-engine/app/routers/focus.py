@@ -407,11 +407,13 @@ async def websocket_endpoint(
             if frame_count % commit_interval == 0:
                 try:
                     db.commit()
-                    # Periodic garbage collection to free memory
-                    gc.collect()
                 except Exception as e:
                     print(f"❌ Failed to commit session update: {e}")
                     db.rollback()
+            
+            # ✅ Periodic garbage collection (every 100 frames to prevent memory buildup)
+            if frame_count % 100 == 0:
+                gc.collect()
             
             # ✅ Prepare response
             response = {
@@ -452,10 +454,6 @@ async def websocket_endpoint(
             
             # ✅ Send response immediately
             await websocket.send_json(response)
-            
-            # ✅ Cleanup frame data to free memory
-            del frame_data
-            del result
     
     except WebSocketDisconnect:
         print(f"🔌 WebSocket disconnected for session {session_id}")
