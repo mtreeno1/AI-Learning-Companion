@@ -355,7 +355,7 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
 
       frameIntervalRef.current = setInterval(() => {
         sendFrame()
-      }, 100) // 10 FPS - faster response for better tracking
+      }, 143) // ~7 FPS - balanced for responsiveness without overwhelming browser
     }
 
     const stopSendingFrames = () => {
