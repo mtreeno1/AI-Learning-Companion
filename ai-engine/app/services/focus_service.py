@@ -30,14 +30,14 @@ class FocusDetectionService:
         self.alert_cooldown = 2  # seconds - reduced for faster alerts
         
         # Detection thresholds
-        self. PERSON_CONFIDENCE_THRESHOLD = 0.3
-        self.PHONE_CONFIDENCE_THRESHOLD = 0.4
-        self.NO_PERSON_TIMEOUT = 5  # seconds before "no person" alert
+        self.PERSON_CONFIDENCE_THRESHOLD = 0.3
+        self.PHONE_CONFIDENCE_THRESHOLD = 0.35  # Lowered for better detection
+        self.NO_PERSON_TIMEOUT = 2  # seconds - faster response before "no person" alert
         
         # State tracking
         self.no_person_start_time = None
-        self. consecutive_phone_detections = 0
-        self.phone_detection_threshold = 3  # frames before alert
+        self.consecutive_phone_detections = 0
+        self.phone_detection_threshold = 2  # Reduced frames before alert for faster response
         
     def detect_frame(self, frame: np.ndarray) -> Dict: 
         """
