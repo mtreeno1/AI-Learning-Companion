@@ -5,7 +5,9 @@ import { CameraPreview } from "@/components/camera-preview"
 import { HourglassTimer } from "@/components/hourglass-timer"
 import { ModeSelector } from "@/components/mode-selector"
 import { Button } from "@/components/ui/button"
-import { Play, Pause, RotateCcw } from "lucide-react"
+import { Play, Pause, RotateCcw, Video } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 
 export type StudyModeType = "pomodoro" | "manual" | null
 
@@ -14,6 +16,7 @@ export function StudyMode() {
   const [isRunning, setIsRunning] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(25 * 60) // 25 minutes default
   const [manualDuration, setManualDuration] = useState(30) // 30 minutes default for manual
+  const [enableRecording, setEnableRecording] = useState(false) // ✅ Recording option
 
   const handleModeSelect = (mode: StudyModeType) => {
     setSelectedMode(mode)
@@ -60,21 +63,35 @@ export function StudyMode() {
             {selectedMode === "pomodoro" ? "Pomodoro Mode - 25 min focus" : `Manual Mode - ${manualDuration} min`}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setSelectedMode(null)}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          Change Mode
-        </Button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Switch
+              id="recording-mode"
+              checked={enableRecording}
+              onCheckedChange={setEnableRecording}
+              disabled={isRunning}
+            />
+            <Label htmlFor="recording-mode" className="text-sm flex items-center gap-1 cursor-pointer">
+              <Video className="w-4 h-4" />
+              Record Session
+            </Label>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSelectedMode(null)}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            Change Mode
+          </Button>
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex gap-8 items-stretch">
         {/* Camera Preview */}
         <div className="flex-1 flex flex-col min-w-0">
-          <CameraPreview />
+          <CameraPreview enableRecording={enableRecording} />
         </div>
 
         {/* Hourglass Timer */}

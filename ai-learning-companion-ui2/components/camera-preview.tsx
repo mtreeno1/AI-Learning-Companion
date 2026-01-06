@@ -3,7 +3,7 @@
 import type React from "react"
 import { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle } from "react"
 import { Card } from "@/components/ui/card"
-import { Video, VideoOff, Eye, Upload, X, Activity, AlertCircle } from "lucide-react"
+import { Video, VideoOff, Eye, Upload, X, Activity, AlertCircle, Circle, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/auth-context"
 
@@ -24,6 +24,11 @@ interface SessionStats {
   focused_frames: number
 }
 
+interface RecordingStatus {
+  enabled: boolean
+  active: boolean
+}
+
 interface DetectionResult {
   session_id: string
   timestamp: string
@@ -36,6 +41,7 @@ interface DetectionResult {
   alert_type: string | null
   violation_type?:  string | null
   consecutive_violations?: number
+  recording?: RecordingStatus
   stats:  SessionStats
 }
 
@@ -50,10 +56,11 @@ interface CameraPreviewProps {
   onAIStart?: () => void
   onAIStop?: () => void
   autoStartWithTimer?: boolean  // ✅ Tự động start AI khi timer start
+  enableRecording?: boolean  // ✅ Enable backend video recording
 }
 
 export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
-  ({ isTimerRunning = false, onAIStart, onAIStop, autoStartWithTimer = true }, ref) => {
+  ({ isTimerRunning = false, onAIStart, onAIStop, autoStartWithTimer = true, enableRecording = false }, ref) => {
     const { user } = useAuth()
 
     const videoRef = useRef<HTMLVideoElement>(null)
@@ -74,6 +81,10 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
     const [isTracking, setIsTracking] = useState(false)
     const [detection, setDetection] = useState<DetectionResult | null>(null)
     const [isReconnecting, setIsReconnecting] = useState(false)
+    
+    // Recording states
+    const [isRecording, setIsRecording] = useState(false)
+    const [recordingId, setRecordingId] = useState<string | null>(null)
 
     // ✅ Auto start/stop AI when timer changes
     useEffect(() => {
@@ -182,6 +193,72 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
       }
     }
 
+    // Start recording
+    const startRecording = useCallback(async () => {
+      if (!sessionId || !user?.token) {
+        console.error("No session or token for recording")
+        return
+      }
+
+      try {
+        console.log("🎥 Starting video recording...")
+        const response = await fetch(
+          `http://localhost:8000/api/recordings/sessions/${sessionId}/start?fps=30&resolution=1920x1080`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          throw new Error(`Failed to start recording: ${response.status} ${errorText}`)
+        }
+
+        const data = await response.json()
+        setRecordingId(data.recording_id)
+        setIsRecording(true)
+        console.log("✅ Recording started:", data.recording_id)
+      } catch (err) {
+        console.error("Recording start error:", err)
+        setError(`Failed to start recording: ${err instanceof Error ? err.message : 'Unknown error'}`)
+      }
+    }, [sessionId, user])
+
+    // Stop recording
+    const stopRecording = useCallback(async () => {
+      if (!sessionId || !user?.token || !isRecording) {
+        return
+      }
+
+      try {
+        console.log("🛑 Stopping video recording...")
+        const response = await fetch(
+          `http://localhost:8000/api/recordings/sessions/${sessionId}/stop`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          throw new Error(`Failed to stop recording: ${response.status} ${errorText}`)
+        }
+
+        const data = await response.json()
+        console.log("✅ Recording stopped:", data)
+        setIsRecording(false)
+        setRecordingId(null)
+      } catch (err) {
+        console.error("Recording stop error:", err)
+      }
+    }, [sessionId, user, isRecording])
+
     // Start AI tracking
     const startTracking = useCallback(async () => {
       if (!user?.token) {
@@ -205,8 +282,19 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
       if (!id) return
 
       setSessionId(id)
+      
+      // Start recording if enabled
+      if (enableRecording) {
+        // Wait a bit for session to be fully created
+        setTimeout(() => {
+          startRecording()
+        }, 500)
+      }
 
-      const ws = new WebSocket(`ws://localhost:8000/api/focus/ws/${id}`)
+      const wsUrl = enableRecording 
+        ? `ws://localhost:8000/api/focus/ws/${id}?enable_recording=true`
+        : `ws://localhost:8000/api/focus/ws/${id}`
+      const ws = new WebSocket(wsUrl)
       wsRef.current = ws
 
       ws.onopen = () => {
@@ -284,11 +372,16 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
           }, 3000)
         }
       }
-    }, [user, mode, isTracking, isTimerRunning, autoStartWithTimer, onAIStart])
+    }, [user, mode, isTracking, isTimerRunning, autoStartWithTimer, onAIStart, enableRecording, startRecording])
 
     // Stop AI tracking
     const stopTracking = useCallback(async () => {
       console.log("🛑 Stopping AI tracking...")
+      
+      // Stop recording first if active
+      if (isRecording) {
+        await stopRecording()
+      }
       
       // Clear reconnect timeout
       if (reconnectTimeoutRef.current) {
@@ -347,7 +440,7 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
       setDetection(null)
       
       onAIStop?.()
-    }, [sessionId, user, onAIStop])
+    }, [sessionId, user, onAIStop, isRecording, stopRecording])
 
     // Send frames to AI
     const startSendingFrames = () => {
@@ -519,6 +612,16 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
                 <div className="absolute top-20 left-4 right-4 z-10">
                   <div className="px-4 py-2 rounded-lg backdrop-blur-md bg-blue-500/80 text-white">
                     <p className="text-sm">🔄 Reconnecting to AI service...</p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Recording indicator */}
+              {isRecording && (
+                <div className="absolute top-4 right-4 z-10">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md bg-red-600/90 text-white">
+                    <Circle className="w-3 h-3 fill-white animate-pulse" />
+                    <span className="text-sm font-semibold">Recording</span>
                   </div>
                 </div>
               )}
@@ -735,6 +838,47 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
               <div className="mt-2 text-xs text-muted-foreground">
                 Person confidence: {(detection.person_confidence * 100).toFixed(1)}%
               </div>
+            )}
+            
+            {/* Recording status and download */}
+            {enableRecording && (
+              <div className="mt-4 pt-4 border-t border-border/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {isRecording ? (
+                      <>
+                        <Circle className="w-4 h-4 fill-red-500 text-red-500 animate-pulse" />
+                        <span className="text-sm font-semibold text-red-600">Recording in progress</span>
+                      </>
+                    ) : recordingId ? (
+                      <>
+                        <Circle className="w-4 h-4 fill-green-500 text-green-500" />
+                        <span className="text-sm text-muted-foreground">Recording saved</span>
+                      </>
+                    ) : (
+                      <>
+                        <Circle className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">No recording</span>
+                      </>
+                    )}
+                  </div>
+                  
+                  {recordingId && !isRecording && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        window.open(`http://localhost:8000/api/recordings/${recordingId}/download`, '_blank')
+                      }}
+                      className="gap-2"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download Recording
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
             )}
           </Card>
         )}
