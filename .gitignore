@@ -36,3 +36,10 @@ ai-engine/__pycache__/
 ai-engine/**/__pycache__/
 ai-engine/*.pyc
 ai-engine/**/*.pyc
+
+# Video recordings (don't commit large video files)
+ai-engine/recordings/
+recordings/
+*.mp4
+*.avi
+*.mov
