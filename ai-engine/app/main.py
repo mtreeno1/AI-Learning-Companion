@@ -63,6 +63,7 @@ from app.config import settings
 from app.database import init_db
 from app.routers import auth_router
 from app.routers. focus import router as focus_router  # ✅ Make sure this line exists
+from app.routers.recordings import router as recordings_router
 
 # Initialize database
 init_db()
@@ -86,6 +87,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router, tags=["Authentication"])
 app.include_router(focus_router, tags=["Focus Detection"])
+app.include_router(recordings_router, tags=["Video Recordings"])
 
 @app.get("/")
 def read_root():
@@ -110,12 +112,22 @@ async def startup_event():
     try:
         from app.models.user import User
         from app.models.learning_session import LearningSession
+        from app.models.video_recording import VideoRecording
         from app. database import Base, engine
         
         Base.metadata.create_all(bind=engine)
         print("✅ Database tables ready")
     except Exception as e:
         print(f"⚠️  Database error: {e}")
+    
+    # Create recordings directory
+    try:
+        from pathlib import Path
+        recordings_dir = Path("recordings")
+        recordings_dir.mkdir(exist_ok=True)
+        print(f"✅ Recordings directory ready: {recordings_dir.absolute()}")
+    except Exception as e:
+        print(f"⚠️  Failed to create recordings directory: {e}")
     
     print(f"📍 Server: http://{settings.API_HOST}:{settings.API_PORT}")
     print(f"📚 Docs:    http://{settings.API_HOST}:{settings.API_PORT}/docs")

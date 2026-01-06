@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 from typing import Dict, Optional
 import base64
+import numpy as np
+import cv2
 from uuid import UUID
 
 from app.database import get_db
@@ -18,6 +20,7 @@ from app.schemas.focus import (
     SessionStats
 )
 from app.services.focus_service import get_focus_service
+from app.services.video_recording_service import get_video_recording_service
 from app.dependencies import get_current_user
 from utils.datetime_utils import now_utc, calculate_duration, make_aware
 
@@ -211,7 +214,8 @@ async def delete_session(
 async def websocket_endpoint(
     websocket: WebSocket,
     session_id: str,
-    db:  Session = Depends(get_db)
+    db:  Session = Depends(get_db),
+    enable_recording: bool = Query(False, description="Enable video recording")
 ):
     """
     WebSocket endpoint for real-time AI focus detection.
@@ -225,6 +229,10 @@ async def websocket_endpoint(
     - Alert system
     - Keepalive ping/pong
     - Batch database commits for performance
+    - Optional backend video recording (high quality)
+    
+    Query Parameters:
+    - enable_recording: If True, records video on backend in high quality
     """
     await websocket.accept()
     
@@ -252,6 +260,18 @@ async def websocket_endpoint(
         await websocket.close(code=1011, reason="AI service unavailable")
         return
     
+    # Initialize video recording if requested
+    video_service = None
+    recording_active = False
+    if enable_recording:
+        try:
+            video_service = get_video_recording_service()
+            # Note: Recording will be started via separate API endpoint
+            # This just enables frame writing during detection
+            print(f"🎥 Video recording enabled for session {session_id}")
+        except Exception as e:
+            print(f"⚠️ Failed to initialize video recording: {e}")
+    
     # Initialize session tracking
     if session_id not in session_data:
         session_data[session_id] = {
@@ -259,6 +279,7 @@ async def websocket_endpoint(
             "focused_frames": 0,
             "last_score": float(session.initial_score),
             "consecutive_violations": 0,  # Track consecutive violations for escalating alerts
+            "recording_enabled": enable_recording,
         }
     
     print(f"🔌 WebSocket connected for session {session_id}")
@@ -294,6 +315,19 @@ async def websocket_endpoint(
                     "timestamp": now_utc().isoformat()
                 })
                 continue
+            
+            # ✅ Write frame to video recording if enabled
+            if video_service and video_service.is_recording(session_id):
+                try:
+                    # Decode frame data to numpy array for recording
+                    nparr = np.frombuffer(frame_data, np.uint8)
+                    frame_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                    
+                    if frame_img is not None:
+                        video_service.write_frame(session_id, frame_img)
+                        recording_active = True
+                except Exception as e:
+                    print(f"⚠️ Failed to write frame to recording: {e}")
             
             # ✅ Run AI detection
             try:
@@ -427,6 +461,12 @@ async def websocket_endpoint(
                 # Additional info
                 "violation_type": violation_type,
                 "consecutive_violations": session_data[session_id]["consecutive_violations"],
+                
+                # Recording status
+                "recording": {
+                    "enabled": enable_recording,
+                    "active": recording_active,
+                },
                 
                 # Stats
                 "stats":  {

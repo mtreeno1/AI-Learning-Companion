@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Integer, Float, DateTime, ForeignKey, Numeric
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import uuid
 from app.database import Base
@@ -53,6 +54,9 @@ class LearningSession(Base):
     
     # Focus metrics
     focus_percentage = Column(Float, default=100.0)
+    
+    # Relationships
+    video_recordings = relationship("VideoRecording", back_populates="session", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<LearningSession {self.session_id} - {self.session_name}>"
