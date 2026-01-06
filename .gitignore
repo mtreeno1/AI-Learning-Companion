@@ -2,14 +2,20 @@
 
 # dependencies
 /node_modules
+node_modules/
 package-lock.json
+yarn.lock
 
 # next.js
 /.next/
 /out/
+.next/
+out/
 
 # production
 /build
+build/
+dist/
 
 # debug
 npm-debug.log*
@@ -17,11 +23,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
+# env files (NEVER commit these)
 .env*
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
 
 # vercel
 .vercel
@@ -32,10 +40,15 @@ next-env.d.ts
 
 # Python
 ai-engine/venv/
+ai-engine/env/
 ai-engine/__pycache__/
 ai-engine/**/__pycache__/
 ai-engine/*.pyc
 ai-engine/**/*.pyc
+*.py[cod]
+__pycache__/
+*.so
+.Python
 
 # Video recordings (don't commit large video files)
 ai-engine/recordings/
@@ -43,3 +56,52 @@ recordings/
 *.mp4
 *.avi
 *.mov
+*.mkv
+*.flv
+
+# YOLO models (large files, download separately)
+*.pt
+!ai-engine/models/.gitkeep
+
+# Database
+*.db
+*.sqlite3
+*.sqlite
+
+# Docker
+docker-compose.override.yml
+
+# SSL/Certificates
+ssl/*.pem
+ssl/*.key
+ssl/*.crt
+*.pem
+*.key
+*.crt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+.pytest_cache/
+.coverage
+
+# Backup files
+*.bak
+*.backup
+backup*.tar.gz
+
+# Temporary files
+tmp/
+temp/
+.tmp/

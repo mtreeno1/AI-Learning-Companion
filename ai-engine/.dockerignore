@@ -1,0 +1,59 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite3
+
+# Recordings (will be mounted as volume)
+recordings/
+*.mp4
+*.avi
+
+# Models (will be mounted as volume or downloaded)
+models/*.pt
+!models/.gitkeep
+
+# Environment
+.env
+.env.local
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Test files
+test_*.py
+*_test.py
