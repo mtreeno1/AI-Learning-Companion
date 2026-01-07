@@ -42,6 +42,7 @@ class FocusDetectionService:
     def detect_frame(self, frame: np.ndarray) -> Dict: 
         """
         Detect objects in a single frame and determine focus status
+        Optimized for real-time performance
         
         Args:
             frame: OpenCV image (BGR format)
@@ -67,8 +68,24 @@ class FocusDetectionService:
                 }
             }
         """
-        # Run YOLO detection
-        results = self.model(frame, verbose=False)
+        # ✅ Resize frame for faster inference if too large
+        target_size = 384  # Good balance between speed and accuracy
+        h, w = frame.shape[:2]
+        if max(h, w) > target_size:
+            scale = target_size / max(h, w)
+            new_w, new_h = int(w * scale), int(h * scale)
+            frame = cv2.resize(frame, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        
+        # ✅ Run YOLO detection with optimized settings
+        results = self.model(
+            frame,
+            imgsz=384,      # Lower inference size for speed
+            conf=0.25,      # Lower confidence threshold
+            iou=0.45,       # Standard IOU
+            verbose=False,
+            half=False,     # Set to True if using GPU
+            device='cpu'    # Change to 'cuda' if GPU available
+        )
         
         # Parse detections
         person_detected = False

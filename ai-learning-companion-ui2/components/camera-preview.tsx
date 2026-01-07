@@ -81,10 +81,16 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
     const [isTracking, setIsTracking] = useState(false)
     const [detection, setDetection] = useState<DetectionResult | null>(null)
     const [isReconnecting, setIsReconnecting] = useState(false)
+    const [isProcessing, setIsProcessing] = useState(false) // ✅ Track if frame is being processed
     
     // Recording states
     const [isRecording, setIsRecording] = useState(false)
     const [recordingId, setRecordingId] = useState<string | null>(null)
+    
+    // Performance tracking
+    const [avgLatency, setAvgLatency] = useState<number>(0)
+    const latencyHistoryRef = useRef<number[]>([])
+    const frameTimestampRef = useRef<number>(0)
 
     // ✅ Auto start/stop AI when timer changes
     useEffect(() => {
@@ -141,11 +147,6 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
     const cleanupAll = useCallback(() => {
       stopTracking()
       
-      if (frameIntervalRef.current) {
-        clearInterval(frameIntervalRef.current)
-        frameIntervalRef.current = null
-      }
-      
       if (keepaliveIntervalRef.current) {
         clearInterval(keepaliveIntervalRef.current)
         keepaliveIntervalRef.current = null
@@ -155,6 +156,10 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
         clearTimeout(reconnectTimeoutRef.current)
         reconnectTimeoutRef.current = null
       }
+      
+      // ✅ Reset processing state
+      setIsProcessing(false)
+      frameTimestampRef.current = 0
     }, [])
 
     // Create AI session
@@ -329,12 +334,37 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
           if (data.error) {
             console.error("AI Error:", data.error)
             setError(data.error)
+            setIsProcessing(false) // ✅ Allow retry on error
             return
+          }
+          
+          // ✅ Calculate latency
+          if (frameTimestampRef.current > 0) {
+            const latency = Date.now() - frameTimestampRef.current
+            latencyHistoryRef.current.push(latency)
+            if (latencyHistoryRef.current.length > 10) {
+              latencyHistoryRef.current.shift() // Keep last 10 only
+            }
+            const avg = latencyHistoryRef.current.reduce((a, b) => a + b, 0) / latencyHistoryRef.current.length
+            setAvgLatency(Math.round(avg))
+            
+            // ✅ Log slow responses
+            if (latency > 2000) {
+              console.warn(`⚠️ Slow response: ${latency}ms`)
+            }
           }
           
           // Handle detection result
           const result:  DetectionResult = data
           setDetection(result)
+          
+          // ✅ Mark processing complete and send next frame
+          setIsProcessing(false)
+          
+          // ✅ Use requestAnimationFrame for smooth frame sending
+          requestAnimationFrame(() => {
+            sendFrame()
+          })
 
           // Play alert for urgent violations
           if (result.alert_type === "urgent" || result.alert_type === "critical") {
@@ -342,6 +372,7 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
           }
         } catch (err) {
           console.error("Failed to parse WebSocket message:", err)
+          setIsProcessing(false) // ✅ Allow retry on parse error
         }
       }
 
@@ -444,21 +475,24 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
 
     // Send frames to AI
     const startSendingFrames = () => {
-      if (frameIntervalRef.current) return // Already sending
-
-      frameIntervalRef.current = setInterval(() => {
-        sendFrame()
-      }, 200) // 5 FPS
+      // ✅ Adaptive frame rate - send first frame to start the chain
+      setIsProcessing(false)
+      sendFrame()
     }
 
     const stopSendingFrames = () => {
-      if (frameIntervalRef.current) {
-        clearInterval(frameIntervalRef.current)
-        frameIntervalRef. current = null
-      }
+      // ✅ Clean up - no interval to clear anymore
+      setIsProcessing(false)
+      frameTimestampRef.current = 0
     }
 
     const sendFrame = () => {
+      // ✅ Don't send if already processing previous frame
+      if (isProcessing) {
+        console.log("⏳ Skipping frame - still processing previous")
+        return
+      }
+      
       if (! wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return
 
       const video = mode === "camera" ? videoRef. current : uploadedVideoRef.current
@@ -468,16 +502,25 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
         const ctx = canvas.getContext("2d")
         if (!ctx) return
 
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        ctx.drawImage(video, 0, 0)
+        // ✅ Reduce resolution for faster processing (640x480 instead of full HD)
+        canvas.width = 640
+        canvas.height = 480
+        ctx.drawImage(video, 0, 0, 640, 480)
 
         try {
-          const dataUrl = canvas.toDataURL("image/jpeg", 0.8)
+          setIsProcessing(true) // ✅ Mark as processing
+          frameTimestampRef.current = Date.now() // ✅ Track send time for latency
+          
+          // ✅ Lower JPEG quality for faster encoding (0.7 instead of 0.8)
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.7)
           wsRef.current.send(dataUrl)
         } catch (err) {
           console.error("Failed to send frame:", err)
+          setIsProcessing(false) // ✅ Reset on error
         }
+      } else {
+        // ✅ If no frame ready, reset and try again
+        setIsProcessing(false)
       }
     }
 
@@ -598,6 +641,11 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
                     <div className="flex justify-between text-xs opacity-90 mt-1">
                       <span>Confidence: {(detection.confidence * 100).toFixed(1)}%</span>
                       <span>Score: {detection.stats.current_score. toFixed(1)}</span>
+                      {avgLatency > 0 && (
+                        <span className={avgLatency > 1000 ? "text-red-200" : avgLatency > 500 ? "text-yellow-200" : ""}>
+                          Latency: {avgLatency}ms
+                        </span>
+                      )}
                       {detection.consecutive_violations && detection.consecutive_violations > 0 && (
                         <span className="text-red-200">
                           Violations: {detection.consecutive_violations}
