@@ -179,7 +179,14 @@ nvidia-smi
 ```bash
 cd ai-engine
 pip uninstall torch torchvision  # Remove CPU version
+
+# For CUDA 11.8:
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# For CUDA 12.1:
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# Or check compatibility at: https://pytorch.org/get-started/locally/
 ```
 
 **3. Verify GPU:**

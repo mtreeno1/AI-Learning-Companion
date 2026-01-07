@@ -42,7 +42,7 @@ class FocusDetectionService:
         
         # State tracking
         self.no_person_start_time = None
-        self. consecutive_phone_detections = 0
+        self.consecutive_phone_detections = 0
         self.phone_detection_threshold = 3  # frames before alert
         
         # ✅ YOLO class IDs for filtering (COCO dataset)
