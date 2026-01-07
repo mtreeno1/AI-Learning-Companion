@@ -502,17 +502,17 @@ export const CameraPreview = forwardRef<CameraPreviewRef, CameraPreviewProps>(
         const ctx = canvas.getContext("2d")
         if (!ctx) return
 
-        // ✅ Reduce resolution for faster processing (640x480 instead of full HD)
-        canvas.width = 640
-        canvas.height = 480
-        ctx.drawImage(video, 0, 0, 640, 480)
+        // ✅ Aggressive resolution reduction for maximum speed (320x240)
+        canvas.width = 320
+        canvas.height = 240
+        ctx.drawImage(video, 0, 0, 320, 240)
 
         try {
           setIsProcessing(true) // ✅ Mark as processing
           frameTimestampRef.current = Date.now() // ✅ Track send time for latency
           
-          // ✅ Lower JPEG quality for faster encoding (0.7 instead of 0.8)
-          const dataUrl = canvas.toDataURL("image/jpeg", 0.7)
+          // ✅ Very low JPEG quality for maximum speed (0.5 instead of 0.7)
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.5)
           wsRef.current.send(dataUrl)
         } catch (err) {
           console.error("Failed to send frame:", err)
