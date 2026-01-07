@@ -57,9 +57,12 @@ restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 ```
 
+**⚠️ IMPORTANT:** Dockerfile đã có `WORKDIR /app` nên start command chỉ cần `python run.py`, KHÔNG dùng `cd ai-engine && ...` vì `cd` không available trong Docker containers.
+
 2. **Hoặc config trong Railway Dashboard:**
    - Settings → Build → Dockerfile Path: `ai-engine/Dockerfile.railway`
    - Settings → Deploy → Start Command: `python run.py`
+   - Root Directory: Leave empty (use repository root)
 
 3. **Deploy:**
 ```bash
@@ -194,6 +197,42 @@ git push origin main
 ---
 
 ## Troubleshooting
+
+### Lỗi: Container failed to start - `cd` executable not found
+
+**Vấn đề:**
+```
+Container failed to start
+The executable `cd` could not be found.
+```
+
+**Nguyên nhân:**
+- Start command sử dụng `cd ai-engine && python run.py`
+- `cd` là shell built-in command, không phải executable
+- Docker containers không có access trực tiếp đến shell built-ins
+
+**Giải pháp:**
+Railway config (railway.toml) đã được fix:
+
+```toml
+[deploy]
+# ❌ WRONG - cd is not an executable
+startCommand = "cd ai-engine && python run.py"
+
+# ✅ CORRECT - Dockerfile already sets WORKDIR /app
+startCommand = "python run.py"
+```
+
+**Explanation:**
+- Dockerfile.railway đã có `WORKDIR /app` 
+- Tất cả code đã copy vào `/app`
+- `run.py` file đã ở trong working directory
+- Không cần `cd` command
+
+**Alternative (nếu cần shell):**
+```toml
+startCommand = "sh -c 'python run.py'"
+```
 
 ### Lỗi: Package 'libgl1-mesa-glx' has no installation candidate
 
