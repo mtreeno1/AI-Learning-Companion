@@ -12,6 +12,13 @@ Upgrade your plan to increase the image size limit.
 - PyTorch + OpenCV + YOLO models rất nặng
 - Base image không được optimize
 
+**Lỗi build thường gặp:**
+```
+E: Package 'libgl1-mesa-glx' has no installation candidate
+```
+- Package `libgl1-mesa-glx` đã bị deprecated trong Debian 12+
+- Cần dùng `libgl1` thay thế
+
 ---
 
 ## Giải pháp 1: Optimize Dockerfile (KHUYẾN NGHỊ) ⭐
@@ -187,6 +194,30 @@ git push origin main
 ---
 
 ## Troubleshooting
+
+### Lỗi: Package 'libgl1-mesa-glx' has no installation candidate
+
+**Vấn đề:**
+```
+E: Package 'libgl1-mesa-glx' has no installation candidate
+```
+
+**Nguyên nhân:**
+- Package `libgl1-mesa-glx` đã bị deprecated trong Debian 12 (Bookworm) và Debian 13 (Trixie)
+- Railway hiện dùng Python 3.10-slim base image với Debian Trixie
+
+**Giải pháp:**
+Dockerfile.railway đã được fix. Thay `libgl1-mesa-glx` bằng `libgl1`:
+
+```dockerfile
+# OLD (không work)
+RUN apt-get install -y libgl1-mesa-glx
+
+# NEW (works)
+RUN apt-get install -y libgl1
+```
+
+File `Dockerfile.railway` đã được update với fix này.
 
 ### Vẫn quá 4 GB?
 
