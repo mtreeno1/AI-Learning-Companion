@@ -1,0 +1,46 @@
+# Optimized Backend Dockerfile for Railway
+# Reduces image size from 8.1 GB to ~1.5-2.5 GB
+# Single-stage build for simplicity
+
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    libgomp1 \
+    libgl1 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file (Railway builds from repo root)
+COPY ai-engine/requirements.railway.txt .
+
+# Install CPU-only PyTorch and dependencies
+# This is much lighter than GPU version (4-5x smaller)
+RUN pip install --no-cache-dir \
+    torch==2.5.1+cpu \
+    torchvision==0.20.1+cpu \
+    --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -r requirements.railway.txt
+
+# Copy application code (Railway builds from repo root, so copy ai-engine contents)
+COPY ai-engine/ .
+
+# Create necessary directories
+RUN mkdir -p models recordings
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PORT=8000
+
+# Expose port
+EXPOSE 8000
+
+# Run the application
+CMD ["python", "run.py"]

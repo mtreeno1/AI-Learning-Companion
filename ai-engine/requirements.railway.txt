@@ -1,0 +1,37 @@
+# Optimized requirements for Railway deployment
+# Reduces Docker image size significantly
+
+# Ultralytics YOLO (includes necessary dependencies)
+ultralytics
+
+# OpenCV headless (no GUI dependencies - much lighter)
+# Use this instead of opencv-python
+opencv-python-headless
+
+# Core numerical library
+numpy
+
+# FastAPI and server
+fastapi
+uvicorn[standard]
+
+# Data validation
+pydantic[email]
+pydantic-settings
+
+# File upload support
+python-multipart
+
+# Authentication
+passlib[argon2]
+python-jose[cryptography]
+
+# Database
+sqlalchemy
+psycopg2-binary
+
+# WebSocket support
+websockets
+
+# Note: PyTorch will be installed as CPU-only version in Dockerfile
+# This is much lighter than GPU version (1.5GB vs 6-7GB)
